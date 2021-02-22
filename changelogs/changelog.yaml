@@ -1,0 +1,9 @@
+ancestor: null
+releases:
+  1.0.0:
+    plugins:
+      inventory:
+      - description: Equinix Metal Device inventory source
+        name: device
+        namespace: null
+    release_date: '2021-02-23'

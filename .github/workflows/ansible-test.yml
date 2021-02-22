@@ -1,0 +1,44 @@
+name: CI
+on:
+- pull_request
+- push
+jobs:
+  sanity:
+    name: Sanity (Ⓐ${{ matrix.ansible }}+py${{ matrix.python }})
+    strategy:
+      matrix:
+        ansible:
+          - stable-2.9
+          - stable-2.10
+          - devel
+        python:
+          - 2.7
+          - 3.7
+          - 3.8
+          - 3.9
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          path: ansible_collections/equinix/metal
+
+      - name: Set up Python ${{ matrix.ansible }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python }}
+
+      # Install the head of the given branch (devel, stable-2.10)
+      - name: Install ansible-base (${{ matrix.ansible }})
+        run: pip install https://github.com/ansible/ansible/archive/${{ matrix.ansible }}.tar.gz --disable-pip-version-check
+
+      # Install the collection dependencies
+      - name: Install collection dependencies
+        run: pip install requirements.txt
+
+      # run ansible-test sanity inside of Docker.
+      # The docker container has all the pinned dependencies that are required.
+      # Explicitly specify the version of Python we want to test
+      - name: Run sanity tests
+        run: ansible-test sanity -v --docker --color
+        working-directory: ./ansible_collections/equinix/metal
