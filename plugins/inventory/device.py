@@ -1,5 +1,6 @@
 # (c) 2016, Peter Sankauskas
 # (c) 2017, Tomas Karasek
+# (c) 2021, Jason DeTiberus
 #
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
@@ -11,7 +12,7 @@ DOCUMENTATION = '''
     plugin_type: inventory
     short_description: Equinix Metal Device inventory source
     requirements:
-        - packet
+        - "packet-python >= 1.43.1"
     extends_documentation_fragment:
         - equinix.metal.auth_options
         - inventory_cache
@@ -21,6 +22,7 @@ DOCUMENTATION = '''
     author:
         - Peter Sankauskas
         - Tomas Karasek
+        - Jason DeTiberus
     options:
         plugin:
             description: Token that ensures this is a source file for the plugin.
