@@ -47,7 +47,7 @@ collections:
 The python module dependencies are not installed by `ansible-galaxy`.  They can
 be manually installed using pip:
 
-    pip install requirements.txt
+    pip install -r requirements.txt
 
 or:
 
@@ -104,7 +104,7 @@ Prepare the release:
 
 Push the release:
 - Tag the release: `git tag -s 1.0.0`
-- Push the tag: `git push origin 1.0.`
+- Push the tag: `git push origin 1.0.0`
 
 ## More information
 
