@@ -72,7 +72,7 @@ from ansible.plugins.inventory import BaseInventoryPlugin, Constructable, Cachea
 try:
     import packet
 except ImportError:
-    sys.exit("failed=True msg='`packet-python` library required for this script'")
+    raise AnsibleError('The device dynamic inventory plugin requires python-packet.')
 
 
 class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):

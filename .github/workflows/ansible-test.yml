@@ -10,12 +10,11 @@ jobs:
         ansible:
           - stable-2.9
           - stable-2.10
-          - devel
+          #- devel
         python:
           - 2.7
           - 3.7
           - 3.8
-          - 3.9
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
@@ -34,11 +33,12 @@ jobs:
 
       # Install the collection dependencies
       - name: Install collection dependencies
-        run: pip install requirements.txt
+        run: pip install -r requirements.txt
+        working-directory: ./ansible_collections/equinix/metal
 
       # run ansible-test sanity inside of Docker.
       # The docker container has all the pinned dependencies that are required.
       # Explicitly specify the version of Python we want to test
       - name: Run sanity tests
-        run: ansible-test sanity -v --docker --color
+        run: ansible-test sanity -v --docker --color --python ${{ matrix.python }}
         working-directory: ./ansible_collections/equinix/metal
