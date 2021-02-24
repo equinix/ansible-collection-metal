@@ -25,6 +25,7 @@ notes:
      - Doesn't support check mode.
 extends_documentation_fragment:
      - equinix.metal.metal
+     - equinix.metal.metal_project
 options:
     count:
         description:
@@ -76,11 +77,6 @@ options:
     plan:
         description:
             - Plan slug for device creation. See Equinix Metal API for current list - U(https://metal.equinix.com/developers/api/plans/).
-        type: str
-    project_id:
-        description:
-            - ID of project of the device.
-        required: true
         type: str
     state:
         description:
@@ -243,7 +239,6 @@ import time
 import uuid
 import traceback
 
-from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils._text import to_native
 
 HAS_METAL_SDK = True
@@ -252,8 +247,7 @@ try:
 except ImportError:
     HAS_METAL_SDK = False
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.equinix.metal.plugins.module_utils.metal import get_api_token
+from ansible_collections.equinix.metal.plugins.module_utils.metal import AnsibleMetalModule
 
 NAME_RE = r'({0}|{0}{1}*{0})'.format(r'[a-zA-Z0-9]', r'[a-zA-Z0-9\-]')
 HOSTNAME_RE = r'({0}\.)*{0}$'.format(NAME_RE)
@@ -581,9 +575,8 @@ def act_on_devices(module, metal_conn, target_state):
 
 
 def main():
-    module = AnsibleModule(
+    module = AnsibleMetalModule(
         argument_spec=dict(
-            api_token=dict(no_log=True, aliases=['auth_token']),
             count=dict(type='int', default=1),
             count_offset=dict(type='int', default=1),
             device_ids=dict(type='list', elements='str'),
@@ -594,7 +587,6 @@ def main():
             locked=dict(type='bool', default=False, aliases=['lock']),
             operating_system=dict(),
             plan=dict(),
-            project_id=dict(required=True),
             state=dict(choices=ALLOWED_STATES, default='present'),
             user_data=dict(default=None),
             wait_for_public_IPv=dict(type='int', choices=[4, 6]),
@@ -613,7 +605,7 @@ def main():
     if not HAS_METAL_SDK:
         module.fail_json(msg='packet required for this module')
 
-    api_token = get_api_token(module)
+    api_token = module.get_api_token()
 
     if not api_token:
         _fail_msg = ("if Equinix Metal API token is not set through an environment variable, "
