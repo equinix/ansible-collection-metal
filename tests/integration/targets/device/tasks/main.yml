@@ -1,0 +1,50 @@
+---
+- module_defaults:
+    equinix.metal.device:
+      project_id: '{{ project_id }}'
+      api_token: '{{ api_token }}'
+  block:
+    - name: test first device is started
+      equinix.metal.device:
+        name: ansible-integration-test
+        operating_system: ubuntu_20_04
+        plan: t1.small.x86
+        facility: ewr1
+        state: active
+      register: test_device_1
+
+    - name: assert device started
+      assert:
+        that:
+          - "test_device_1.devices[0].state == 'active'"
+
+    - name: test first device is deleted
+      equinix.metal.device:
+        device_ids: "{{ test_device_1.devices|map(attribute='id') }}"
+        state: absent
+
+    # This is needed since the module doesn't update the device status after deletion
+    - name: Requery until the device state is absent
+      equinix.metal.device:
+        device_ids: "{{ test_device_1.devices|map(attribute='id') }}"
+        state: absent
+      register: result
+      until: not result.devices
+      retries: 5
+      delay: 10
+
+  always:
+
+    # ============================================================
+
+
+    # TEAR DOWN: device
+    - name: Announce teardown start
+      debug:
+        msg: "***** TESTING COMPLETE. COMMENCE TEARDOWN *****"
+
+    - name: delete test devices
+      equinix.metal.device:
+        name: ansible-integration-test
+        state: absent
+      ignore_errors: yes

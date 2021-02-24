@@ -9,14 +9,11 @@ class ModuleDocFragment(object):
     # Standard documentation
     DOCUMENTATION = r'''
     options:
-        api_token:
-            description: The Equinix Metal API token to use
-            required: True
+        project_id:
+            description:
+                - Project ID.
+            required: true
             type: str
-            aliases:
-                - auth_token
-            env:
-                - name: METAL_API_TOKEN
-                - name: PACKET_API_TOKEN
-                - name: PACKET_TOKEN
+    requirements:
+        - "packet-python >= 1.43.1"
     '''

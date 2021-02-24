@@ -11,9 +11,14 @@ plugins:
       name: device
       version_added: 1.0.0
   lookup: {}
-  module: {}
+  module:
+    device:
+      description: Manage a bare metal server in Equinix Metal
+      name: device
+      namespace: ''
+      version_added: 1.1.0
   netconf: {}
   shell: {}
   strategy: {}
   vars: {}
-version: 1.0.0
+version: 1.1.0
