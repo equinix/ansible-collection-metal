@@ -80,7 +80,18 @@ If you want to develop new content for this collection or improve what is alread
 
 ### Testing with `ansible-test`
 
-TODO
+Running sanity tests: `ansible-test sanity --docker -v`
+Running unit tests: `ansible-test units -v --docker`
+
+Running integration tests:
+
+```sh
+cat << EOF > tests/integration/integration_config.yml
+api_token: <YOUR EQUINIX METAL API TOKEN>
+project_id: <EQUINIX METAL PROJECT ID TO RUN TESTS AGAINST>
+EOF
+ ansible-test integration -v --docker
+ ```
 
 ### More information about contributing
 

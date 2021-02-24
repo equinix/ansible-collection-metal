@@ -545,6 +545,7 @@ def act_on_devices(module, metal_conn, target_state):
                 api_operation = state_map[target_state].get(d.state)
                 if api_operation is not None:
                     api_operation(d)
+                    # TODO: update device status after operation
                     changed = True
             else:
                 _msg = (
