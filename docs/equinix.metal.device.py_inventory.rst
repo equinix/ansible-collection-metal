@@ -25,7 +25,7 @@ Requirements
 ------------
 The below requirements are needed on the local Ansible controller node that executes this inventory.
 
-- packet
+- packet-python >= 1.43.1
 
 
 Parameters
@@ -59,6 +59,7 @@ Parameters
                     </td>
                 <td>
                         <div>The Equinix Metal API token to use</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: auth_token</div>
                 </td>
             </tr>
             <tr>
@@ -347,6 +348,7 @@ Authors
 
 - Peter Sankauskas
 - Tomas Karasek
+- Jason DeTiberus
 
 
 .. hint::

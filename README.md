@@ -28,6 +28,11 @@ Name | Description
 --- | ---
 [equinix.metal.device.py](https://github.com/equinix/ansible-collection-metal/blob/main/docs/equinix.metal.device.py_inventory.rst)|Equinix Metal Device inventory source
 
+### Modules
+Name | Description
+--- | ---
+[equinix.metal.device](https://github.com/equinix/ansible-collection-metal/blob/main/docs/equinix.metal.device_module.rst)|Manage a bare metal server in Equinix Metal
+
 <!--end collection content-->
 
 ## Installing this collection

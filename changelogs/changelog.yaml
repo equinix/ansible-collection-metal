@@ -7,3 +7,9 @@ releases:
         name: device
         namespace: null
     release_date: '2021-02-23'
+  1.1.0:
+    modules:
+    - description: Manage a bare metal server in Equinix Metal
+      name: device
+      namespace: ''
+    release_date: '2021-02-24'
