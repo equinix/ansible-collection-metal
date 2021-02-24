@@ -65,8 +65,6 @@ compose:
   ansible_host: (ip_addresses | selectattr('address_family', 'equalto', 4) | selectattr('public', 'equalto', false) | first).address
 '''
 
-import sys
-
 from ansible.errors import AnsibleError
 from ansible.module_utils import six
 from ansible.plugins.inventory import BaseInventoryPlugin, Constructable, Cacheable, to_safe_group_name

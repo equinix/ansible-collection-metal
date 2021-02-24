@@ -233,7 +233,6 @@ devices:
 '''  # NOQA
 
 
-import os
 import re
 import time
 import uuid
