@@ -65,14 +65,15 @@ compose:
   ansible_host: (ip_addresses | selectattr('address_family', 'equalto', 4) | selectattr('public', 'equalto', false) | first).address
 '''
 
-from ansible.errors import AnsibleError
+from ansible.errors import AnsibleError, AnsibleParserError
 from ansible.module_utils import six
 from ansible.plugins.inventory import BaseInventoryPlugin, Constructable, Cacheable, to_safe_group_name
 
 try:
     import packet
+    HAS_METAL = True
 except ImportError:
-    raise AnsibleError('The device dynamic inventory plugin requires python-packet.')
+    HAS_METAL = False
 
 
 class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
@@ -146,6 +147,11 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
             self._add_host_to_keyed_groups(self.get_option('keyed_groups'), host, hostname, strict=strict)
 
     def parse(self, inventory, loader, path, cache=True):
+
+        if not HAS_METAL:
+            raise AnsibleParserError(
+                'The Equinix Metal Device inventory plugin requires the python "packet-python" library'
+            )
 
         super(InventoryModule, self).parse(inventory, loader, path)
 
