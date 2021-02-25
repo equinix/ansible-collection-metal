@@ -93,7 +93,6 @@ Running integration tests:
 ```sh
 cat << EOF > tests/integration/integration_config.yml
 api_token: <YOUR EQUINIX METAL API TOKEN>
-project_id: <EQUINIX METAL PROJECT ID TO RUN TESTS AGAINST>
 EOF
  ansible-test integration -v --docker
  ```

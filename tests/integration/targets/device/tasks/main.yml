@@ -1,12 +1,23 @@
 ---
 - module_defaults:
     equinix.metal.device:
-      project_id: '{{ project_id }}'
+      api_token: '{{ api_token }}'
+    equinix.metal.device_info:
+      api_token: '{{ api_token }}'
+    equinix.metal.project:
+      api_token: '{{ api_token }}'
+    equinix.metal.project_info:
       api_token: '{{ api_token }}'
   block:
+    - name: create project for test
+      equinix.metal.project:
+        name: "{{ test_resource_name_prefix }}-{{ lookup('password', '/dev/null chars=ascii_lowercase,digits length=8') }}"
+      register: test_project
+
     - name: test first device is started
       equinix.metal.device:
-        name: ansible-integration-test
+        project_id: "{{ test_project.id }}"
+        name: "{{ test_resource_name_prefix }}-{{ lookup('password', '/dev/null chars=ascii_lowercase,digits length=8') }}"
         operating_system: ubuntu_20_04
         plan: t1.small.x86
         facility: ewr1
@@ -20,12 +31,14 @@
 
     - name: test first device is deleted
       equinix.metal.device:
+        project_id: "{{ test_project.id }}"
         device_ids: "{{ test_device_1.devices|map(attribute='id') }}"
         state: absent
 
     # This is needed since the module doesn't update the device status after deletion
     - name: Requery until the device state is absent
       equinix.metal.device:
+        project_id: "{{ test_project.id }}"
         device_ids: "{{ test_device_1.devices|map(attribute='id') }}"
         state: absent
       register: result
@@ -43,8 +56,37 @@
       debug:
         msg: "***** TESTING COMPLETE. COMMENCE TEARDOWN *****"
 
+    - name: list projects
+      equinix.metal.project_info:
+      register: test_projects
+
+    - set_fact:
+        matching_projects: "{{ test_projects.projects | selectattr('name', 'match', '^'+test_resource_name_prefix+'-') | list }}"
+
+    - name: list devices
+      equinix.metal.device_info:
+        project_id: "{{ item.id }}"
+      register: test_devices
+      loop: "{{ matching_projects }}"
+
+    - set_fact:
+        mp: "{{ test_devices.results | map(attribute='item.id') }}"
+        md: "{{ test_devices.results | map(attribute='devices') | map('selectattr', 'hostname', 'match', '^'+test_resource_name_prefix+'-') | map('map', attribute='id') }}"
+
+    - set_fact:
+        matching_proj_device_ids: "{{ dict(mp | zip(md)) | dict2items(key_name='project_id', value_name='device_ids') | selectattr('device_ids') }}"
+
     - name: delete test devices
       equinix.metal.device:
-        name: ansible-integration-test
+        device_ids: "{{ item.device_ids }}"
+        project_id: "{{ item.project_id }}"
         state: absent
-      ignore_errors: yes
+      loop: "{{ matching_proj_device_ids }}"
+      ignore_errors: true
+
+    - name: delete test projects
+      equinix.metal.project:
+        id: "{{ item.id }}"
+        state: absent
+      loop: "{{ matching_projects }}"
+      ignore_errors: true

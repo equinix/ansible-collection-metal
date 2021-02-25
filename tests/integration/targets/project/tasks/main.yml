@@ -1,0 +1,40 @@
+---
+- module_defaults:
+    equinix.metal.project:
+      api_token: '{{ api_token }}'
+    equinix.metal.project_info:
+      api_token: '{{ api_token }}'
+  block:
+    - name: create project for test
+      equinix.metal.project:
+        name: "{{ test_resource_name_prefix }}-{{ lookup('password', '/dev/null chars=ascii_lowercase,digits length=8') }}"
+      register: test_project
+
+    - name: test project is deleted
+      equinix.metal.project:
+        id: "{{ test_project.id }}"
+        state: absent
+
+  always:
+
+    # ============================================================
+
+
+    # TEAR DOWN: project
+    - name: Announce teardown start
+      debug:
+        msg: "***** TESTING COMPLETE. COMMENCE TEARDOWN *****"
+
+    - name: list projects
+      equinix.metal.project_info:
+      register: test_projects
+
+    - set_fact:
+        matching_projects: "{{ test_projects.projects | selectattr('name', 'match', '^'+test_resource_name_prefix+'-') | list }}"
+
+    - name: delete test projects
+      equinix.metal.project:
+        id: "{{ item.id }}"
+        state: absent
+      loop: "{{ matching_projects }}"
+      ignore_errors: true

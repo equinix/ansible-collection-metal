@@ -1,4 +1,6 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 # (c) 2016, Tomas Karasek <tom.to.the.k@gmail.com>
 # (c) 2016, Matt Baldwin <baldwin@stackpointcloud.com>
 # (c) 2016, Thibaud Morel l'Horset <teebes@gmail.com>
@@ -16,6 +18,7 @@ description:
     - Manage a bare metal server in Equinix Metal (a "device" in the API terms).
     - When the machine is created it can optionally wait for public IP address, or for active state.
     - API is documented at U(https://metal.equinix.com/developers/api/devices/).
+version_added: 1.1.0
 author:
     - Tomas Karasek (@t0mk) <tom.to.the.k@gmail.com>
     - Matt Baldwin (@baldwinSPC) <baldwin@stackpointcloud.com>
@@ -114,7 +117,6 @@ options:
             - Normally, the PXE process happens only on the first boot. Set this arg to have your device continuously boot to iPXE.
         default: false
         type: bool
-version_added: 1.1.0
 '''
 
 EXAMPLES = '''
@@ -468,8 +470,8 @@ def wait_for_devices_active(module, metal_conn, watched_devices):
 def wait_for_public_IPv(module, metal_conn, created_devices):
 
     def has_public_ip(addr_list, ip_v):
-        return any([a['public'] and a['address_family'] == ip_v and
-                    a['address'] for a in addr_list])
+        return any([a['public'] and a['address_family'] == ip_v
+                    and a['address'] for a in addr_list])
 
     def all_have_public_ip(ds, ip_v):
         return all([has_public_ip(d.ip_addresses, ip_v) for d in ds])
@@ -516,8 +518,8 @@ def act_on_devices(module, metal_conn, target_state):
                             if hn not in existing_devices_names]
 
     process_devices = [d for d in existing_devices
-                       if (d.id in specified_identifiers['ids']) or
-                       (d.hostname in specified_identifiers['hostnames'])]
+                       if (d.id in specified_identifiers['ids'])
+                       or (d.hostname in specified_identifiers['hostnames'])]
 
     if target_state != 'present':
         _absent_state_map = {}
@@ -603,16 +605,9 @@ def main():
     )
 
     if not HAS_METAL_SDK:
-        module.fail_json(msg='packet required for this module')
+        module.fail_json(msg='python-packet required for this module')
 
-    api_token = module.get_api_token()
-
-    if not api_token:
-        _fail_msg = ("if Equinix Metal API token is not set through an environment variable, "
-                     "the api_token parameter is required")
-        module.fail_json(msg=_fail_msg)
-
-    metal_conn = packet.Manager(auth_token=api_token)
+    metal_conn = packet.Manager(auth_token=module.params.get('api_token'))
 
     state = module.params.get('state')
 

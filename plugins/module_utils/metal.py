@@ -5,9 +5,13 @@
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
-import os
+import re
+import uuid
 
-from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils.basic import AnsibleModule, env_fallback
+
+NAME_RE = r'({0}|{0}{1}*{0})'.format(r'[a-zA-Z0-9]', r'[a-zA-Z0-9\-]')
+HOSTNAME_RE = r'({0}\.)*{0}$'.format(NAME_RE)
 
 
 class AnsibleMetalModule(object):
@@ -58,22 +62,6 @@ class AnsibleMetalModule(object):
         self._diff = self._module._diff
         self._name = self._module._name
 
-    def get_api_token(self):
-        api_token = self.params.get('api_token')
-
-        if not api_token:
-            if os.environ.get('METAL_API_TOKEN'):
-                api_token = os.environ['METAL_API_TOKEN']
-            elif os.environ.get('PACKET_API_TOKEN'):
-                api_token = os.environ['PACKET_API_TOKEN']
-            elif os.environ.get('PACKET_TOKEN'):
-                api_token = os.environ['PACKET_TOKEN']
-            else:
-                # in case api_token came in as empty string
-                api_token = None
-
-        return api_token
-
     @property
     def params(self):
         return self._module.params
@@ -100,9 +88,23 @@ class AnsibleMetalModule(object):
         return self._module.md5(*args, **kwargs)
 
 
+def devices_with_ids(devices, ids):
+    return [d for d in devices if (d.id in ids)]
+
+
+def devices_with_hostnames(devices, hostnames):
+    return [d for d in devices if (d.hostname in hostnames)]
+
+
 def metal_argument_spec():
     return dict(
-        api_token=dict(no_log=True, aliases=['auth_token']),
+        api_token=dict(
+            type='str',
+            fallback=(env_fallback, ['METAL_API_TOKEN', 'PACKET_API_TOKEN', 'PACKET_TOKEN']),
+            no_log=True,
+            aliases=['auth_token'],
+            required=True
+        ),
     )
 
 
@@ -110,3 +112,106 @@ def metal_project_id_argument_spec():
     return dict(
         project_id=dict(required=True),
     )
+
+
+def is_valid_hostname(hostname):
+    return re.match(HOSTNAME_RE, hostname) is not None
+
+
+def is_valid_uuid(myuuid):
+    try:
+        val = uuid.UUID(myuuid, version=4)
+    except ValueError:
+        return False
+    return str(val) == myuuid
+
+
+def serialize_device(device):
+    """
+    Standard representation for a device as returned by various tasks::
+
+        {
+            'id': 'device_id'
+            'hostname': 'device_hostname',
+            'tags': [],
+            'locked': false,
+            'state': 'provisioning',
+            'ip_addresses': [
+                {
+                    "address": "147.75.194.227",
+                    "address_family": 4,
+                    "public": true
+                },
+                {
+                    "address": "2604:1380:2:5200::3",
+                    "address_family": 6,
+                    "public": true
+                },
+                {
+                    "address": "10.100.11.129",
+                    "address_family": 4,
+                    "public": false
+                }
+            ],
+            "private_ipv4": "10.100.11.129",
+            "public_ipv4": "147.75.194.227",
+            "public_ipv6": "2604:1380:2:5200::3",
+        }
+
+    """
+    device_data = {}
+    device_data['id'] = device.id
+    device_data['hostname'] = device.hostname
+    device_data['tags'] = device.tags
+    device_data['locked'] = device.locked
+    device_data['state'] = device.state
+    device_data['ip_addresses'] = [
+        {
+            'address': addr_data['address'],
+            'address_family': addr_data['address_family'],
+            'public': addr_data['public'],
+        }
+        for addr_data in device.ip_addresses
+    ]
+    # Also include each IPs as a key for easier lookup in roles.
+    # Key names:
+    # - public_ipv4
+    # - public_ipv6
+    # - private_ipv4
+    # - private_ipv6 (if there is one)
+    for ipdata in device_data['ip_addresses']:
+        if ipdata['public']:
+            if ipdata['address_family'] == 6:
+                device_data['public_ipv6'] = ipdata['address']
+            elif ipdata['address_family'] == 4:
+                device_data['public_ipv4'] = ipdata['address']
+        elif not ipdata['public']:
+            if ipdata['address_family'] == 6:
+                # Packet doesn't give public ipv6 yet, but maybe one
+                # day they will
+                device_data['private_ipv6'] = ipdata['address']
+            elif ipdata['address_family'] == 4:
+                device_data['private_ipv4'] = ipdata['address']
+    return device_data
+
+
+def serialize_project(project):
+    """
+    Standard representation for a project as returned by various tasks::
+
+        {
+            'id': 'project_id'
+            'name': 'project_name',
+        }
+
+    """
+    return dict(
+        id=project.id,
+        name=project.name,
+    )
+
+
+def get_devices(metal_conn, project_id, per_page):
+    return metal_conn.list_devices(
+        project_id, params={
+            'per_page': per_page})
