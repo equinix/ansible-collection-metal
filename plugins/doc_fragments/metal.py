@@ -12,7 +12,7 @@ class ModuleDocFragment(object):
         api_token:
             description:
                 - The Equinix Metal API token to use
-                - If not seet, then the value of the METAL_API_TOKEN, PACKET_API_TOKEN, or PACKET_TOKEN environment variable is used.
+                - If not set, then the value of the METAL_API_TOKEN, PACKET_API_TOKEN, or PACKET_TOKEN environment variable is used.
             type: str
             required: true
             aliases:
