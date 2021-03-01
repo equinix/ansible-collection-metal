@@ -127,9 +127,6 @@ def act_on_project(target_state, module, metal_conn):
         matching_projects = [
             p for p in metal_conn.list_projects() if given_name == p.name]
 
-    result_dict['desired_state'] = target_state
-    result_dict['matching_projects'] = [serialize_project(p) for p in matching_projects]
-
     if target_state == 'present':
         if len(matching_projects) == 0:
             org_id = module.params.get('org_id')
