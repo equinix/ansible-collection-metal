@@ -1,0 +1,3 @@
+integration_tests_dependencies:
+- community.crypto
+unit_tests_dependencies: []
