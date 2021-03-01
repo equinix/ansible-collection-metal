@@ -66,7 +66,6 @@ devices:
 '''
 
 
-import time
 import traceback
 
 from ansible.module_utils._text import to_native
