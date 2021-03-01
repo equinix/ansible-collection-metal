@@ -1,4 +1,10 @@
 ---
+- set_fact:
+    unique_id: "{{ lookup('password', '/dev/null chars=ascii_lowercase,digits length=8') }}"
+
+- set_fact:
+    test_prefix: "{{ test_resource_name_prefix }}-{{ unique_id }}"
+
 - module_defaults:
     equinix.metal.project:
       api_token: '{{ api_token }}'
@@ -7,7 +13,7 @@
   block:
     - name: create project for test
       equinix.metal.project:
-        name: "{{ test_resource_name_prefix }}-{{ lookup('password', '/dev/null chars=ascii_lowercase,digits length=8') }}"
+        name: "{{ test_prefix }}-1"
       register: test_project
 
     - name: test project is deleted
@@ -30,7 +36,7 @@
       register: test_projects
 
     - set_fact:
-        matching_projects: "{{ test_projects.projects | selectattr('name', 'match', '^'+test_resource_name_prefix+'-') | list }}"
+        matching_projects: "{{ test_projects.projects | selectattr('name', 'match', '^'+test_prefix) | list }}"
 
     - name: delete test projects
       equinix.metal.project:
