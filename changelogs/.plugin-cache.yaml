@@ -17,8 +17,23 @@ plugins:
       name: device
       namespace: ''
       version_added: 1.1.0
+    device_info:
+      description: Gather information about Equinix Metal devices
+      name: device_info
+      namespace: ''
+      version_added: 1.2.0
+    project:
+      description: Create/delete a project in Equinix Metal
+      name: project
+      namespace: ''
+      version_added: 1.2.0
+    project_info:
+      description: Gather information about Equinix Metal projects
+      name: project_info
+      namespace: ''
+      version_added: 1.2.0
   netconf: {}
   shell: {}
   strategy: {}
   vars: {}
-version: 1.1.0
+version: 1.2.0

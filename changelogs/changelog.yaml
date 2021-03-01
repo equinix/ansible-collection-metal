@@ -13,3 +13,15 @@ releases:
       name: device
       namespace: ''
     release_date: '2021-02-24'
+  1.2.0:
+    modules:
+    - description: Gather information about Equinix Metal devices
+      name: device_info
+      namespace: ''
+    - description: Create/delete a project in Equinix Metal
+      name: project
+      namespace: ''
+    - description: Gather information about Equinix Metal projects
+      name: project_info
+      namespace: ''
+    release_date: '2021-03-01'

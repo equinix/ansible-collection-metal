@@ -1,4 +1,10 @@
 ---
+- set_fact:
+    unique_id: "{{ lookup('password', '/dev/null chars=ascii_lowercase,digits length=8') }}"
+
+- set_fact:
+    test_prefix: "{{ test_resource_name_prefix }}-{{ unique_id }}"
+
 - module_defaults:
     equinix.metal.device:
       api_token: '{{ api_token }}'
@@ -11,13 +17,13 @@
   block:
     - name: create project for test
       equinix.metal.project:
-        name: "{{ test_resource_name_prefix }}-{{ lookup('password', '/dev/null chars=ascii_lowercase,digits length=8') }}"
+        name: "{{ test_prefix }}"
       register: test_project
 
     - name: test first device is started
       equinix.metal.device:
         project_id: "{{ test_project.id }}"
-        name: "{{ test_resource_name_prefix }}-{{ lookup('password', '/dev/null chars=ascii_lowercase,digits length=8') }}"
+        name: "{{ test_prefix }}-dev1"
         operating_system: ubuntu_20_04
         plan: t1.small.x86
         facility: ewr1
@@ -61,7 +67,7 @@
       register: test_projects
 
     - set_fact:
-        matching_projects: "{{ test_projects.projects | selectattr('name', 'match', '^'+test_resource_name_prefix+'-') | list }}"
+        matching_projects: "{{ test_projects.projects | selectattr('name', 'match', '^'+test_prefix) | list }}"
 
     - name: list devices
       equinix.metal.device_info:
@@ -71,7 +77,7 @@
 
     - set_fact:
         mp: "{{ test_devices.results | map(attribute='item.id') }}"
-        md: "{{ test_devices.results | map(attribute='devices') | map('selectattr', 'hostname', 'match', '^'+test_resource_name_prefix+'-') | map('map', attribute='id') }}"
+        md: "{{ test_devices.results | map(attribute='devices') | map('selectattr', 'hostname', 'match', '^'+test_prefix) | map('map', attribute='id') }}"
 
     - set_fact:
         matching_proj_device_ids: "{{ dict(mp | zip(md)) | dict2items(key_name='project_id', value_name='device_ids') | selectattr('device_ids') }}"
