@@ -38,14 +38,14 @@
     - name: test first device is deleted
       equinix.metal.device:
         project_id: "{{ test_project.id }}"
-        device_ids: "{{ test_device_1.devices|map(attribute='id') }}"
+        device_ids: "{{ test_device_1.devices|map(attribute='id')|list }}"
         state: absent
 
     # This is needed since the module doesn't update the device status after deletion
     - name: Requery until the device state is absent
       equinix.metal.device:
         project_id: "{{ test_project.id }}"
-        device_ids: "{{ test_device_1.devices|map(attribute='id') }}"
+        device_ids: "{{ test_device_1.devices|map(attribute='id')|list }}"
         state: absent
       register: result
       until: not result.devices
@@ -80,7 +80,7 @@
         md: "{{ test_devices.results | map(attribute='devices') | map('selectattr', 'hostname', 'match', '^'+test_prefix) | map('map', attribute='id') }}"
 
     - set_fact:
-        matching_proj_device_ids: "{{ dict(mp | zip(md)) | dict2items(key_name='project_id', value_name='device_ids') | selectattr('device_ids') }}"
+        matching_proj_device_ids: "{{ dict(mp | zip(md)) | dict2items(key_name='project_id', value_name='device_ids') | selectattr('device_ids') | list }}"
 
     - name: delete test devices
       equinix.metal.device:
