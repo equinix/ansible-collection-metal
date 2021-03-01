@@ -113,7 +113,7 @@ try:
 except ImportError:
     HAS_METAL_SDK = False
 
-from ansible_collections.equinix.metal.plugins.module_utils.metal import AnsibleMetalModule, serialize_project
+from ansible_collections.equinix.metal.plugins.module_utils.metal import AnsibleMetalModule
 
 
 def act_on_project(target_state, module, metal_conn):
