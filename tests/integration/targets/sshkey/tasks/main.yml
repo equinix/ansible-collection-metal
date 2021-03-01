@@ -1,0 +1,62 @@
+---
+- set_fact:
+    unique_id: "{{ lookup('password', '/dev/null chars=ascii_lowercase,digits length=8') }}"
+
+- set_fact:
+    test_prefix: "{{ test_resource_name_prefix }}-{{ unique_id }}"
+
+- collections:
+    - community.crypto
+
+- module_defaults:
+    equinix.metal.sshkey:
+      api_token: '{{ api_token }}'
+    equinix.metal.sshkey_info:
+      api_token: '{{ api_token }}'
+
+  block:
+    - name: Create temporary directory
+      ansible.builtin.tempfile:
+        state: directory
+        suffix: integration-sshkey
+      register: temp_dir
+
+    - name: Generate an ssh keypair
+      community.crypto.openssh_keypair:
+        path: "{{ temp_dir.path }}/test-keypair"
+      register: local_ssh_keypair
+
+    - name: create sshkey for test
+      equinix.metal.sshkey:
+        name: "{{ test_prefix }}-1"
+        key: "{{ local_ssh_keypair.public_key }}"
+      register: test_sshkey
+
+    - name: test sshkey is deleted
+      equinix.metal.sshkey:
+        id: "{{ test_sshkey.sshkeys[0].id }}"
+        state: absent
+
+  always:
+
+    # ============================================================
+
+
+    # TEAR DOWN: sshkey
+    - name: Announce teardown start
+      debug:
+        msg: "***** TESTING COMPLETE. COMMENCE TEARDOWN *****"
+
+    - name: list ssh keys
+      equinix.metal.sshkey_info:
+      register: test_sshkeys
+
+    - set_fact:
+        matching_sshkeys: "{{ test_sshkeys.sshkeys | selectattr('label', 'match', '^'+test_prefix) | list }}"
+
+    - name: delete test sshkeys
+      equinix.metal.sshkey:
+        id: "{{ item.id }}"
+        state: absent
+      loop: "{{ matching_sshkeys }}"
+      ignore_errors: true

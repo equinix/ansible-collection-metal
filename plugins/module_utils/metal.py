@@ -200,8 +200,8 @@ def serialize_project(project):
     Standard representation for a project as returned by various tasks::
 
         {
-            'id': 'project_id'
-            'name': 'project_name',
+            'id': 'project_id',
+            'name': 'project_name'
         }
 
     """
@@ -209,6 +209,24 @@ def serialize_project(project):
         id=project.id,
         name=project.name,
     )
+
+
+def serialize_sshkey(sshkey):
+    """
+    Standard representation for an ssh key as returned by various tasks::
+
+        {
+            "fingerprint": "5c:93:74:7c:ed:07:17:62:28:75:79:23:d6:08:93:46",
+            "id": "41d61bd8-3342-428b-a09c-e67bdd18a9b7",
+            "key": "ssh-dss AAAAB3NzaC1kc3MAAACBAIfNT5S0ncP4BBJBYNhNPxFF9lqVhfPeu6SM1LoCocxqDc1AT3zFRi8hjIf6TLZ2AA4FYbcAWxLMhiBxZRVldT9GdBXile78kAK5z3bKTwq152DCqpxwwbaTIggLFhsU8wrfBsPWnDuAxZ0h7mmrCjoLIE3CNLDA/NmV3iB8xMThAAAAFQCStcesSgR1adPORzBxTr7hug92LwAAAIBOProm3Gk+HWedLyE8IfofLaOeRnbBRHAOL4z0SexKkVOnQ/LGN/uDIIPGGBDYTvXgKZT+jbHeulRJ2jKgfSpGKN4JxFQ8uzVH492jEiiUJtT72Ss1dCV4PmyERVIw+f54itihV3z/t25dWgowhb0int8iC/OY3cGodlmYb3wdcQAAAIBuLbB45djZXzUkOTzzcRDIRfhaxo5WipbtEM2B1fuBt2gyrvksPpH/LK6xTjdIIb0CxPu4OCxwJG0aOz5kJoRnOWIXQGhH7VowrJhsqhIc8gN9ErbO5ea8b1L76MNcAotmBDeTUiPw01IJ8MdDxfmcsCslJKgoRKSmQpCwXQtN2g== tomk@hp2",
+            "label": "mynewkey33"
+        }
+    """  # noqa
+    sshkey_data = {}
+    copy_keys = ['id', 'key', 'label', 'fingerprint']
+    for name in copy_keys:
+        sshkey_data[name] = getattr(sshkey, name)
+    return sshkey_data
 
 
 def get_devices(metal_conn, project_id, per_page):
