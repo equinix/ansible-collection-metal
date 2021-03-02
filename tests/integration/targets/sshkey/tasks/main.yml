@@ -5,9 +5,6 @@
 - set_fact:
     test_prefix: "{{ test_resource_name_prefix }}-{{ unique_id }}"
 
-- collections:
-    - community.crypto
-
 - module_defaults:
     equinix.metal.sshkey:
       api_token: '{{ api_token }}'
