@@ -5,6 +5,20 @@ Equinix.Metal Release Notes
 .. contents:: Topics
 
 
+v1.3.0
+======
+
+Bugfixes
+--------
+
+- device - Fix name for device inventory plugin
+
+New Modules
+-----------
+
+- equinix.metal.sshkey - Create/delete an SSH key in Equinix Metal
+- equinix.metal.sshkey_info - Gather information about Equinix Metal SSH keys
+
 v1.2.0
 ======
 
