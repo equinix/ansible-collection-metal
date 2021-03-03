@@ -37,6 +37,8 @@ Name | Description
 [equinix.metal.device_info](https://github.com/equinix/ansible-collection-metal/blob/main/docs/equinix.metal.device_info_module.rst)|Gather information about Equinix Metal devices
 [equinix.metal.project](https://github.com/equinix/ansible-collection-metal/blob/main/docs/equinix.metal.project_module.rst)|Create/delete a project in Equinix Metal
 [equinix.metal.project_info](https://github.com/equinix/ansible-collection-metal/blob/main/docs/equinix.metal.project_info_module.rst)|Gather information about Equinix Metal projects
+[equinix.metal.sshkey](https://github.com/equinix/ansible-collection-metal/blob/main/docs/equinix.metal.sshkey_module.rst)|Create/delete an SSH key in Equinix Metal
+[equinix.metal.sshkey_info](https://github.com/equinix/ansible-collection-metal/blob/main/docs/equinix.metal.sshkey_info_module.rst)|Gather information about Equinix Metal SSH keys
 
 <!--end collection content-->
 

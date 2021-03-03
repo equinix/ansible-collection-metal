@@ -25,3 +25,17 @@ releases:
       name: project_info
       namespace: ''
     release_date: '2021-03-01'
+  1.3.0:
+    changes:
+      bugfixes:
+      - device - Fix name for device inventory plugin
+    fragments:
+    - 12-fix-inventory-plugin-name.yml
+    modules:
+    - description: Create/delete an SSH key in Equinix Metal
+      name: sshkey
+      namespace: ''
+    - description: Gather information about Equinix Metal SSH keys
+      name: sshkey_info
+      namespace: ''
+    release_date: '2021-03-03'
