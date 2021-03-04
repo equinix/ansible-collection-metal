@@ -223,6 +223,22 @@ def serialize_project(project):
     )
 
 
+def serialize_organization(org):
+    """
+    Standard representation for an organization as returned by various tasks::
+
+        {
+            'id': 'org_id',
+            'name': 'org_name'
+        }
+
+    """
+    return dict(
+        id=org.id,
+        name=org.name,
+    )
+
+
 def serialize_sshkey(sshkey):
     """
     Standard representation for an ssh key as returned by various tasks::
