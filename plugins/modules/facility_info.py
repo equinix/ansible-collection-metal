@@ -55,7 +55,7 @@ RETURN = '''
 facilities:
     description: Information about each facility that was found
     type: list
-    sample: '[{
+    sample: "[{
                 'id': '8e6470b3-b75e-47d1-bb93-45b225750975',
                 'name': 'Amsterdam, NL',
                 'code': 'ams1',
@@ -69,7 +69,7 @@ facilities:
                 'address': {
                     'href': '#0688e909-647e-4b21-bdf2-fc056d993fc5'
                 }
-            }]'
+            }]"
     returned: always
 '''
 
