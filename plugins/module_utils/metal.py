@@ -34,6 +34,7 @@ class AnsibleMetalModule(object):
     default_settings = {
         "default_args": True,
         "project_id_arg": True,
+        "project_id_required": True,
         "module_class": AnsibleModule
     }
 
@@ -55,7 +56,7 @@ class AnsibleMetalModule(object):
             kwargs["argument_spec"] = argument_spec_full
 
         if local_settings["project_id_arg"]:
-            argument_spec_full = metal_project_id_argument_spec()
+            argument_spec_full = metal_project_id_argument_spec(local_settings["project_id_required"])
             try:
                 argument_spec_full.update(kwargs["argument_spec"])
             except (TypeError, NameError):
@@ -119,9 +120,9 @@ def metal_argument_spec():
     )
 
 
-def metal_project_id_argument_spec():
+def metal_project_id_argument_spec(required=True):
     return dict(
-        project_id=dict(required=True),
+        project_id=dict(required=required),
     )
 
 
