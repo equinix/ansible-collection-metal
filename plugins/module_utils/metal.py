@@ -223,6 +223,142 @@ def serialize_project(project):
     )
 
 
+def serialize_facility(facility):
+    """
+    Standard representation for a facility as returned by various tasks::
+
+        {
+            'id': '8e6470b3-b75e-47d1-bb93-45b225750975',
+            'name': 'Amsterdam, NL',
+            'code': 'ams1',
+            'features': [
+                'baremetal',
+                'storage',
+                'global_ipv4',
+                'backend_transfer',
+                'layer_2'
+            ],
+            'address': {
+                'href': '#0688e909-647e-4b21-bdf2-fc056d993fc5'
+            }
+        }
+    """
+    return dict(
+        id=facility.id,
+        name=facility.name,
+        code=facility.code,
+        features=facility.features,
+        address=facility.address
+    )
+
+
+def serialize_plan(plan):
+    """
+    Standard representation for a plan as returned by various tasks::
+
+        {
+            "id": "e69c0169-4726-46ea-98f1-939c9e8a3607",
+            "name": "t1.small.x86",
+            "description": "Our Type 0 configuration is a general use \"cloud killer\" server, with a Intel Atom 2.4Ghz processor and 8GB of RAM.",
+            "available_in":[
+                "ams1",
+                "ewr1",
+                "sjc1",
+                "nrt1",
+            ],
+            "line": "baremetal",
+            "pricing": {
+                "hour": 0.07
+            },
+            "slug": "baremetal_0",
+            "specs": {
+                "cpus": [
+                    {
+                        "count": 1,
+                        "type": "Intel Atom C2550 @ 2.4Ghz"
+                    }
+                ],
+                "drives": [
+                    {
+                        "count": 1,
+                        "size": "80GB",
+                        "type": "SSD"
+                    }
+                ],
+                "features": {
+                    "raid": false,
+                    "txt": true
+                },
+                "memory": {
+                    "total": "8GB"
+                },
+                "nics": [
+                    {
+                        "count": 2,
+                        "type": "1Gbps"
+                    }
+                ]
+            }
+        },
+    """
+    plan = dict(
+        id=plan.id,
+        name=plan.name,
+        slug=plan.slug,
+        line=plan.line,
+        pricing=plan.pricing,
+        specs=plan.specs,
+        description=plan.description,
+        available_in=[f.get('code', f) for f in plan.available_in]
+    )
+
+    return plan
+
+
+def serialize_operating_system(operating_system):
+    """
+    Standard representation for a operating_system as returned by various tasks::
+
+        {
+            "distro": "ubuntu",
+            "name": "Ubuntu 20.10",
+            "provisionable_on": [
+                "c1.small.x86",
+                "baremetal_1",
+                "c2.medium.x86",
+                "c3.medium.x86",
+                "c3.small.x86",
+                "g2.large.x86",
+                "m1.xlarge.x86",
+                "baremetal_2",
+                "m2.xlarge.x86",
+                "m3.large.x86",
+                "n2.xlarge.x86",
+                "s1.large.x86",
+                "baremetal_s",
+                "s3.xlarge.x86",
+                "t1.small.x86",
+                "baremetal_0",
+                "x1.small.x86",
+                "baremetal_1e",
+                "x2.xlarge.x86",
+                "x3.xlarge.x86"
+            ],
+            "slug": "ubuntu_20_10",
+            "version": "20.10"
+        },
+    """
+    operating_system = dict(
+        name=operating_system.name,
+        slug=operating_system.slug,
+        distro=operating_system.distro,
+        version=operating_system.version,
+        provisionable_on=operating_system.provisionable_on
+    )
+
+    return operating_system
+
+
 def serialize_organization(org):
     """
     Standard representation for an organization as returned by various tasks::
