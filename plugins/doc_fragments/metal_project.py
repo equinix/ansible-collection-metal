@@ -14,6 +14,4 @@ class ModuleDocFragment(object):
                 - Project ID.
             required: true
             type: str
-    requirements:
-        - "packet-python >= 1.43.1"
     '''
