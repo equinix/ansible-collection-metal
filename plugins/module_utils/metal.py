@@ -81,7 +81,6 @@ class AnsibleMetalModule(object):
 
         return self.metal_conn.list_all_devices(project_id)
 
-
     @property
     def params(self):
         return self._module.params
@@ -257,3 +256,52 @@ def serialize_sshkey(sshkey):
     return sshkey_data
 
 
+def serialize_ip(ip):
+    """
+    Standard representation for an ip as returned by various tasks::
+
+        {
+            "address": "136.144.57.174",
+            "address_family": 4,
+            "assigned_to": null,
+            "cidr": 32,
+            "created_at": "2021-01-05T18:55:55Z",
+            "customdata": {},
+            "details": null,
+            "enabled": true,
+            "facility": "dc13",
+            "gateway": "136.144.57.174",
+            "global_ip": false,
+            "id": "d6764db0-69c6-44e9-922e-18146608cd3a",
+            "interface": null,
+            "management": false,
+            "netmask": "255.255.255.255",
+            "network": "136.144.57.174",
+            "project_id": "f2a2d7ad-886e-4207-bf38-10ebdf49cf84",
+            "public": true,
+            "tags": [
+                "cluster-api-provider-packet:cluster-id:versiontest"
+            ]
+        }
+    """
+    return dict(
+        id=ip.id,
+        address_family=ip.address_family,
+        netmask=ip.netmask,
+        created_at=ip.created_at,
+        details=ip.details,
+        tags=ip.tags,
+        public=ip.public,
+        cidr=ip.cidr,
+        management=ip.management,
+        enabled=ip.enabled,
+        global_ip=ip.global_ip,
+        customdata=ip.customdata,
+        project_id=ip.project['href'].replace("/projects/", ""),
+        facility=str(ip.facility),
+        assigned_to=ip.assigned_to,
+        interface=ip.interface,
+        network=ip.network,
+        address=ip.address,
+        gateway=ip.gateway,
+    )
