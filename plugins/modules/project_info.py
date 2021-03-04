@@ -56,7 +56,7 @@ EXAMPLES = '''
 '''
 
 RETURN = '''
-devices:
+projects:
     description: Information about each project that was found
     type: list
     sample: '[{"name": "my-project", "id": "2a5122b9-c323-4d5c-b53c-9ad3f54273e7"}]'
@@ -65,17 +65,11 @@ devices:
 
 from ansible.module_utils._text import to_native
 
-HAS_METAL_SDK = True
-try:
-    import packet
-except ImportError:
-    HAS_METAL_SDK = False
-
 from ansible_collections.equinix.metal.plugins.module_utils.metal import AnsibleMetalModule, serialize_project
 
 
-def get_project_info(module, metal_conn):
-    projects = metal_conn.list_projects()
+def get_project_info(module):
+    projects = module.metal_conn.list_projects()
 
     if module.params.get('ids'):
         projects = [p for p in projects if p.id in module.params.get('ids')]
@@ -100,13 +94,8 @@ def main():
         ]
     )
 
-    if not HAS_METAL_SDK:
-        module.fail_json(msg='python-packet required for this module')
-
-    metal_conn = packet.Manager(auth_token=module.params.get('api_token'))
-
     try:
-        module.exit_json(**get_project_info(module, metal_conn))
+        module.exit_json(**get_project_info(module))
     except Exception as e:
         module.fail_json(
             msg="failed to get project info, error:  {0}".format(to_native(e)))

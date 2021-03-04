@@ -101,12 +101,6 @@ sshkeys:
 
 from ansible.module_utils._text import to_native
 
-HAS_METAL_SDK = True
-try:
-    import packet
-except ImportError:
-    HAS_METAL_SDK = False
-
 from ansible_collections.equinix.metal.plugins.module_utils.metal import AnsibleMetalModule, is_valid_uuid, serialize_sshkey
 
 
@@ -152,9 +146,9 @@ def get_sshkey_selector(module):
     return selector
 
 
-def act_on_sshkeys(target_state, module, metal_conn):
+def act_on_sshkeys(target_state, module):
     selector = get_sshkey_selector(module)
-    existing_sshkeys = metal_conn.list_ssh_keys()
+    existing_sshkeys = module.metal_conn.list_ssh_keys()
     matching_sshkeys = list(filter(selector, existing_sshkeys))
     changed = False
     if target_state == 'present':
@@ -177,7 +171,7 @@ def act_on_sshkeys(target_state, module, metal_conn):
                             % param)
                     raise Exception(_msg)
             matching_sshkeys = []
-            new_key_response = metal_conn.create_ssh_key(
+            new_key_response = module.metal_conn.create_ssh_key(
                 newkey['label'], newkey['key'])
             changed = True
 
@@ -220,15 +214,11 @@ def main():
             ('key_file', 'key'),
         ]
     )
-    if not HAS_METAL_SDK:
-        module.fail_json(msg='python-packet required for this module')
-
-    metal_conn = packet.Manager(auth_token=module.params.get('api_token'))
 
     state = module.params.get('state')
 
     try:
-        module.exit_json(**act_on_sshkeys(state, module, metal_conn))
+        module.exit_json(**act_on_sshkeys(state, module))
     except Exception as e:
         module.fail_json(msg='failed to set sshkey state: %s' % to_native(e))
 

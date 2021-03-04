@@ -8,6 +8,12 @@ __metaclass__ = type
 import re
 import uuid
 
+HAS_METAL_SDK = True
+try:
+    import packet
+except ImportError:
+    HAS_METAL_SDK = False
+
 from ansible.module_utils.basic import AnsibleModule, env_fallback
 
 NAME_RE = r'({0}|{0}{1}*{0})'.format(r'[a-zA-Z0-9]', r'[a-zA-Z0-9\-]')
@@ -62,6 +68,20 @@ class AnsibleMetalModule(object):
         self._diff = self._module._diff
         self._name = self._module._name
 
+        if not HAS_METAL_SDK:
+            self.fail_json(msg='python-packet required for this module')
+
+        if local_settings["default_args"]:
+            self.metal_conn = packet.Manager(auth_token=self.params.get('api_token'))
+
+    def get_devices(self):
+        project_id = self.params.get('project_id')
+        if not is_valid_uuid(project_id):
+            raise Exception("Project ID {0} does not seem to be valid".format(project_id))
+
+        return self.metal_conn.list_all_devices(project_id)
+
+
     @property
     def params(self):
         return self._module.params
@@ -86,14 +106,6 @@ class AnsibleMetalModule(object):
 
     def md5(self, *args, **kwargs):
         return self._module.md5(*args, **kwargs)
-
-
-def devices_with_ids(devices, ids):
-    return [d for d in devices if (d.id in ids)]
-
-
-def devices_with_hostnames(devices, hostnames):
-    return [d for d in devices if (d.hostname in hostnames)]
 
 
 def metal_argument_spec():
@@ -229,7 +241,3 @@ def serialize_sshkey(sshkey):
     return sshkey_data
 
 
-def get_devices(metal_conn, project_id, per_page):
-    return metal_conn.list_devices(
-        project_id, params={
-            'per_page': per_page})

@@ -237,7 +237,6 @@ devices:
 
 import re
 import time
-import uuid
 import traceback
 
 from ansible.module_utils._text import to_native
@@ -248,11 +247,7 @@ try:
 except ImportError:
     HAS_METAL_SDK = False
 
-from ansible_collections.equinix.metal.plugins.module_utils.metal import AnsibleMetalModule
-
-NAME_RE = r'({0}|{0}{1}*{0})'.format(r'[a-zA-Z0-9]', r'[a-zA-Z0-9\-]')
-HOSTNAME_RE = r'({0}\.)*{0}$'.format(NAME_RE)
-MAX_DEVICES = 100
+from ansible_collections.equinix.metal.plugins.module_utils.metal import AnsibleMetalModule, is_valid_uuid, is_valid_hostname, serialize_device
 
 METAL_DEVICE_STATES = (
     'queued',
@@ -269,108 +264,10 @@ METAL_DEVICE_STATES = (
 ALLOWED_STATES = ['absent', 'active', 'inactive', 'rebooted', 'present']
 
 
-def serialize_device(device):
-    """
-    Standard representation for a device as returned by various tasks::
-
-        {
-            'id': 'device_id'
-            'hostname': 'device_hostname',
-            'tags': [],
-            'locked': false,
-            'state': 'provisioning',
-            'ip_addresses': [
-                {
-                    "address": "147.75.194.227",
-                    "address_family": 4,
-                    "public": true
-                },
-                {
-                    "address": "2604:1380:2:5200::3",
-                    "address_family": 6,
-                    "public": true
-                },
-                {
-                    "address": "10.100.11.129",
-                    "address_family": 4,
-                    "public": false
-                }
-            ],
-            "private_ipv4": "10.100.11.129",
-            "public_ipv4": "147.75.194.227",
-            "public_ipv6": "2604:1380:2:5200::3",
-        }
-
-    """
-    device_data = {}
-    device_data['id'] = device.id
-    device_data['hostname'] = device.hostname
-    device_data['tags'] = device.tags
-    device_data['locked'] = device.locked
-    device_data['state'] = device.state
-    device_data['ip_addresses'] = [
-        {
-            'address': addr_data['address'],
-            'address_family': addr_data['address_family'],
-            'public': addr_data['public'],
-        }
-        for addr_data in device.ip_addresses
-    ]
-    # Also include each IPs as a key for easier lookup in roles.
-    # Key names:
-    # - public_ipv4
-    # - public_ipv6
-    # - private_ipv4
-    # - private_ipv6 (if there is one)
-    for ipdata in device_data['ip_addresses']:
-        if ipdata['public']:
-            if ipdata['address_family'] == 6:
-                device_data['public_ipv6'] = ipdata['address']
-            elif ipdata['address_family'] == 4:
-                device_data['public_ipv4'] = ipdata['address']
-        elif not ipdata['public']:
-            if ipdata['address_family'] == 6:
-                # Packet doesn't give public ipv6 yet, but maybe one
-                # day they will
-                device_data['private_ipv6'] = ipdata['address']
-            elif ipdata['address_family'] == 4:
-                device_data['private_ipv4'] = ipdata['address']
-    return device_data
-
-
-def is_valid_hostname(hostname):
-    return re.match(HOSTNAME_RE, hostname) is not None
-
-
-def is_valid_uuid(myuuid):
-    try:
-        val = uuid.UUID(myuuid, version=4)
-    except ValueError:
-        return False
-    return str(val) == myuuid
-
-
-def listify_string_name_or_id(s):
-    if ',' in s:
-        return s.split(',')
-    else:
-        return [s]
-
-
 def get_hostname_list(module):
-    # hostname is a list-typed param, so I guess it should return list
-    # (and it does, in Ansible 2.2.1) but in order to be defensive,
-    # I keep here the code to convert an eventual string to list
     hostnames = module.params.get('hostnames')
     count = module.params.get('count')
     count_offset = module.params.get('count_offset')
-    if isinstance(hostnames, str):
-        hostnames = listify_string_name_or_id(hostnames)
-    if not isinstance(hostnames, list):
-        raise Exception("name %s is not convertible to list" % hostnames)
-
-    # at this point, hostnames is a list
-    hostnames = [h.strip() for h in hostnames]
 
     if (len(hostnames) > 1) and (count > 1):
         _msg = ("If you set count>1, you should only specify one hostname "
@@ -390,31 +287,20 @@ def get_hostname_list(module):
         if not is_valid_hostname(hn):
             raise Exception("Hostname '%s' does not seem to be valid" % hn)
 
-    if len(hostnames) > MAX_DEVICES:
-        raise Exception("You specified too many hostnames, max is %d" %
-                        MAX_DEVICES)
     return hostnames
 
 
 def get_device_id_list(module):
     device_ids = module.params.get('device_ids')
 
-    if isinstance(device_ids, str):
-        device_ids = listify_string_name_or_id(device_ids)
-
-    device_ids = [di.strip() for di in device_ids]
-
     for di in device_ids:
         if not is_valid_uuid(di):
             raise Exception("Device ID '%s' does not seem to be valid" % di)
 
-    if len(device_ids) > MAX_DEVICES:
-        raise Exception("You specified too many devices, max is %d" %
-                        MAX_DEVICES)
     return device_ids
 
 
-def create_single_device(module, metal_conn, hostname):
+def create_single_device(module, hostname):
 
     for param in ('hostnames', 'operating_system', 'plan'):
         if not module.params.get(param):
@@ -434,7 +320,7 @@ def create_single_device(module, metal_conn, hostname):
             if module.params.get(param):
                 raise Exception('%s parameter is not valid for non custom_ipxe operating_system.' % param)
 
-    device = metal_conn.create_device(
+    device = module.metal_conn.create_device(
         project_id=project_id,
         hostname=hostname,
         tags=tags,
@@ -448,18 +334,18 @@ def create_single_device(module, metal_conn, hostname):
     return device
 
 
-def refresh_device_list(module, metal_conn, devices):
+def refresh_device_list(module, devices):
     device_ids = [d.id for d in devices]
-    new_device_list = get_existing_devices(module, metal_conn)
+    new_device_list = module.get_devices()
     return [d for d in new_device_list if d.id in device_ids]
 
 
-def wait_for_devices_active(module, metal_conn, watched_devices):
+def wait_for_devices_active(module, watched_devices):
     wait_timeout = module.params.get('wait_timeout')
     wait_timeout = time.time() + wait_timeout
     refreshed = watched_devices
     while wait_timeout > time.time():
-        refreshed = refresh_device_list(module, metal_conn, watched_devices)
+        refreshed = refresh_device_list(module, watched_devices)
         if all(d.state == 'active' for d in refreshed):
             return refreshed
         time.sleep(5)
@@ -467,7 +353,7 @@ def wait_for_devices_active(module, metal_conn, watched_devices):
                     % [d.hostname for d in refreshed if d.state != "active"])
 
 
-def wait_for_public_IPv(module, metal_conn, created_devices):
+def wait_for_public_IPv(module, created_devices):
 
     def has_public_ip(addr_list, ip_v):
         return any([a['public'] and a['address_family'] == ip_v
@@ -481,20 +367,13 @@ def wait_for_public_IPv(module, metal_conn, created_devices):
     wait_timeout = module.params.get('wait_timeout')
     wait_timeout = time.time() + wait_timeout
     while wait_timeout > time.time():
-        refreshed = refresh_device_list(module, metal_conn, created_devices)
+        refreshed = refresh_device_list(module, created_devices)
         if all_have_public_ip(refreshed, address_family):
             return refreshed
         time.sleep(5)
 
     raise Exception("Waiting for IPv%d address timed out. Hostnames: %s"
                     % (address_family, [d.hostname for d in created_devices]))
-
-
-def get_existing_devices(module, metal_conn):
-    project_id = module.params.get('project_id')
-    return metal_conn.list_devices(
-        project_id, params={
-            'per_page': MAX_DEVICES})
 
 
 def get_specified_device_identifiers(module):
@@ -506,9 +385,9 @@ def get_specified_device_identifiers(module):
         return {'hostnames': hostname_list, 'ids': []}
 
 
-def act_on_devices(module, metal_conn, target_state):
+def act_on_devices(module, target_state):
     specified_identifiers = get_specified_device_identifiers(module)
-    existing_devices = get_existing_devices(module, metal_conn)
+    existing_devices = module.get_devices()
     changed = False
     create_hostnames = []
     if target_state in ['present', 'active', 'rebooted']:
@@ -558,17 +437,17 @@ def act_on_devices(module, metal_conn, target_state):
     # At last create missing devices
     created_devices = []
     if create_hostnames:
-        created_devices = [create_single_device(module, metal_conn, n)
+        created_devices = [create_single_device(module, n)
                            for n in create_hostnames]
         if module.params.get('wait_for_public_IPv'):
             created_devices = wait_for_public_IPv(
-                module, metal_conn, created_devices)
+                module, created_devices)
         changed = True
 
     processed_devices = created_devices + process_devices
     if target_state == 'active':
         processed_devices = wait_for_devices_active(
-            module, metal_conn, processed_devices)
+            module, processed_devices)
 
     return {
         'changed': changed,
@@ -607,12 +486,10 @@ def main():
     if not HAS_METAL_SDK:
         module.fail_json(msg='python-packet required for this module')
 
-    metal_conn = packet.Manager(auth_token=module.params.get('api_token'))
-
     state = module.params.get('state')
 
     try:
-        module.exit_json(**act_on_devices(module, metal_conn, state))
+        module.exit_json(**act_on_devices(module, state))
     except Exception as e:
         module.fail_json(msg='failed to set device state %s, error: %s' %
                          (state, to_native(e)), exception=traceback.format_exc())
