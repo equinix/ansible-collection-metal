@@ -78,7 +78,7 @@ sshkeys:
 
 from ansible.module_utils._text import to_native
 
-from ansible_collections.equinix.metal.plugins.module_utils.metal import AnsibleMetalModule, is_valid_uuid, serialize_sshkey
+from ansible_collections.equinix.metal.plugins.module_utils.metal import AnsibleMetalModule, serialize_sshkey
 
 
 def get_sshkey_info(module):
