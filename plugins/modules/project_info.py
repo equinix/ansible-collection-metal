@@ -32,7 +32,7 @@ options:
         elements: str
     ids:
         description:
-            - One or more device ids.
+            - One or more project ids.
         type: list
         elements: str
 '''
