@@ -7,8 +7,9 @@ __metaclass__ = type
 
 import pytest
 import os
+import unittest
 
-from ansible_collections.equinix.metal.plugins.module_utils.metal import AnsibleMetalModule
+from ansible_collections.equinix.metal.plugins.module_utils.metal import AnsibleMetalModule, is_valid_hostname
 
 
 @pytest.mark.parametrize('stdin', [{}], indirect=['stdin'])
@@ -59,3 +60,15 @@ def test_get_api_token_param_stdin_pref(stdin):
     os.environ['PACKET_TOKEN'] = 'donotwant'
     module = AnsibleMetalModule(argument_spec=dict(), project_id_arg=False)
     assert module.params.get('api_token') == 'deadbeef'
+
+
+class TestIsValidHostname(unittest.TestCase):
+
+    def test_valid_hostname(self):
+        self.assertTrue(is_valid_hostname("good-hostname"))
+
+    def test_leading_dash(self):
+        self.assertFalse(is_valid_hostname("-hostname"))
+
+    def test_underscores(self):
+        self.assertFalse(is_valid_hostname("bad_hostname"))
