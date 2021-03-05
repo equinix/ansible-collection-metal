@@ -1,14 +1,14 @@
-.. _equinix.metal.project_info_module:
+.. _equinix.metal.user_info_module:
 
 
-**************************
-equinix.metal.project_info
-**************************
+***********************
+equinix.metal.user_info
+***********************
 
-**Gather information about Equinix Metal projects**
+**Gather information about the logged in user**
 
 
-Version added: 1.2.0
+Version added: 1.4.0
 
 .. contents::
    :local:
@@ -17,8 +17,8 @@ Version added: 1.2.0
 
 Synopsis
 --------
-- Gather information about Equinix Metal projects.
-- API is documented at https://metal.equinix.com/developers/api/projects/.
+- Gather information about the logged in user for Equinix Metal.
+- See https://metal.equinix.com/developers/api/users/#retrieve-the-current-user for more info on users.
 
 
 
@@ -58,38 +58,6 @@ Parameters
                         <div style="font-size: small; color: darkgreen"><br/>aliases: auth_token</div>
                 </td>
             </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>ids</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">list</span>
-                         / <span style="color: purple">elements=string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>One or more project ids.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>names</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">list</span>
-                         / <span style="color: purple">elements=string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>One or more project names.</div>
-                </td>
-            </tr>
     </table>
     <br/>
 
@@ -104,18 +72,10 @@ Examples
     # All the examples assume that you have your Equinix Metal API token in env var METAL_API_TOKEN.
     # You can also pass it to the api_token parameter of the module instead.
 
-    - name: Gather information about all projects
+    - name: Gather information about the current logged in user
       hosts: localhost
       tasks:
-        - equinix.metal.project_info:
-
-
-    - name: Gather information about a particular project using ID
-      hosts: localhost
-      tasks:
-        - equinix.metal.project_info:
-          ids:
-            - 173d7f11-f7b9-433e-ac40-f1571a38037a
+        - equinix.metal.user_info:
 
 
 
@@ -134,18 +94,18 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>projects</b>
+                    <b>user</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">list</span>
+                      <span style="color: purple">dictionary</span>
                     </div>
                 </td>
                 <td>always</td>
                 <td>
-                            <div>Information about each project that was found</div>
+                            <div>Information about the logged in user.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[{&quot;name&quot;: &quot;my-project&quot;, &quot;id&quot;: &quot;2a5122b9-c323-4d5c-b53c-9ad3f54273e7&quot;}]</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{ &quot;avatar_thumb_url&quot;: &quot;https://www.gravatar.com/avatar/49d55cbf53f2dae15bfa4c3a3fb884f9?d=mm&quot;, &quot;avatar_url&quot;: &quot;https://www.gravatar.com/avatar/49d55cbf53f2dae15bfa4c3a3fb884f9?d=mm&quot;, &quot;created_at&quot;: &quot;2021-02-26T14:08:17Z&quot;, &quot;customdata&quot;: {}, &quot;default_organization_id&quot;: &quot;594b06f3-cef2-4127-85fd-08332fcf0021&quot;, &quot;default_project_id&quot;: null, &quot;email&quot;: &quot;does@not.exist&quot;, &quot;emails&quot;: [ { &quot;href&quot;: &quot;/emails/7c281a6b-1801-4008-89f3-0a43a2fb26e1&quot; } ], &quot;features&quot;: [ &quot;maintenance_mail&quot;, &quot;deploy_without_public_ip&quot;, &quot;advanced_ips&quot;, &quot;block_storage&quot;, &quot;bgp_default_route&quot;, &quot;native_vlan&quot;, ], &quot;first_name&quot;: &quot;Does&quot;, &quot;full_name&quot;: &quot;Does Not Exist&quot;, &quot;href&quot;: &quot;/users/7867d973-9b75-48dc-b94f-0d0a87e9dda0&quot;, &quot;id&quot;: &quot;7867d973-9b75-48dc-b94f-0d0a87e9dda0&quot;, &quot;language&quot;: null, &quot;last_login_at&quot;: &quot;2021-03-02T21:48:07Z&quot;, &quot;last_name&quot;: &quot;Not Exist&quot;, &quot;mailing_address&quot;: null, &quot;max_projects&quot;: 0, &quot;number_of_ssh_keys&quot;: 0, &quot;opt_in&quot;: false, &quot;opt_in_updated_at&quot;: null, &quot;phone_number&quot;: null, &quot;restricted&quot;: false, &quot;short_id&quot;: &quot;7867d973&quot;, &quot;social_accounts&quot;: {}, &quot;timezone&quot;: &quot;America/New_York&quot;, &quot;two_factor_auth&quot;: &quot;&quot;, &quot;updated_at&quot;: &quot;2021-03-02T08:23:18Z&quot;, &quot;verification_stage&quot;: &quot;verified&quot;, &quot;vpn&quot;: false }</div>
                 </td>
             </tr>
     </table>
@@ -159,6 +119,4 @@ Status
 Authors
 ~~~~~~~
 
-- Tomas Karasek (@t0mk) <tom.to.the.k@gmail.com>
-- Nurfet Becirevic (@nurfet-becirevic) <nurfet.becirevic@gmail.com>
 - Jason DeTiberus (@detiber) <jdetiberus@equinix.com>

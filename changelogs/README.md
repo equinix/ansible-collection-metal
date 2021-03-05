@@ -1,0 +1,1 @@
+Documentation for changelog fragments can be found here: https://github.com/ansible-community/antsibull-changelog/blob/main/docs/changelogs.rst#changelog-fragment-categories

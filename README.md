@@ -33,12 +33,20 @@ Name | Description
 ### Modules
 Name | Description
 --- | ---
+[equinix.metal.capacity_info](https://github.com/equinix/ansible-collection-metal/blob/main/docs/equinix.metal.capacity_info_module.rst)|Gather information about Equinix Metal capacity
 [equinix.metal.device](https://github.com/equinix/ansible-collection-metal/blob/main/docs/equinix.metal.device_module.rst)|Manage a bare metal server in Equinix Metal
 [equinix.metal.device_info](https://github.com/equinix/ansible-collection-metal/blob/main/docs/equinix.metal.device_info_module.rst)|Gather information about Equinix Metal devices
+[equinix.metal.facility_info](https://github.com/equinix/ansible-collection-metal/blob/main/docs/equinix.metal.facility_info_module.rst)|Gather information about Equinix Metal facilities
+[equinix.metal.ip_info](https://github.com/equinix/ansible-collection-metal/blob/main/docs/equinix.metal.ip_info_module.rst)|Gather information about project IP Addresses
+[equinix.metal.ip_subnet](https://github.com/equinix/ansible-collection-metal/blob/main/docs/equinix.metal.ip_subnet_module.rst)|Assign IP subnet to a bare metal server.
+[equinix.metal.operating_system_info](https://github.com/equinix/ansible-collection-metal/blob/main/docs/equinix.metal.operating_system_info_module.rst)|Gather information about Equinix Metal operating_systems
+[equinix.metal.org_info](https://github.com/equinix/ansible-collection-metal/blob/main/docs/equinix.metal.org_info_module.rst)|Gather information about Equinix Metal organizations
+[equinix.metal.plan_info](https://github.com/equinix/ansible-collection-metal/blob/main/docs/equinix.metal.plan_info_module.rst)|Gather information about Equinix Metal plans
 [equinix.metal.project](https://github.com/equinix/ansible-collection-metal/blob/main/docs/equinix.metal.project_module.rst)|Create/delete a project in Equinix Metal
 [equinix.metal.project_info](https://github.com/equinix/ansible-collection-metal/blob/main/docs/equinix.metal.project_info_module.rst)|Gather information about Equinix Metal projects
 [equinix.metal.sshkey](https://github.com/equinix/ansible-collection-metal/blob/main/docs/equinix.metal.sshkey_module.rst)|Create/delete an SSH key in Equinix Metal
 [equinix.metal.sshkey_info](https://github.com/equinix/ansible-collection-metal/blob/main/docs/equinix.metal.sshkey_info_module.rst)|Gather information about Equinix Metal SSH keys
+[equinix.metal.user_info](https://github.com/equinix/ansible-collection-metal/blob/main/docs/equinix.metal.user_info_module.rst)|Gather information about the logged in user
 
 <!--end collection content-->
 
