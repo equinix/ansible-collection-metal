@@ -1,6 +1,6 @@
 # Ansible Collection - equinix.metal
 
-[![CI](https://github.com/equinix/ansible-collection-metal/actions/workflows/ansible-test.yml/badge.svg)](https://github.com/equinix/ansible-collection-metal/actions/workflows/ansible-test.yml)[![Codecov](https://img.shields.io/codecov/c/github/equinix/ansible-collection-metal)](https://codecov.io/gh/equinix/ansible-collection-metal)
+[![CI](https://github.com/equinix/ansible-collection-metal/actions/workflows/ansible-integration.yml/badge.svg)](https://github.com/equinix/ansible-collection-metal/actions/workflows/ansible-integration.yml)[![Codecov](https://img.shields.io/codecov/c/github/equinix/ansible-collection-metal)](https://codecov.io/gh/equinix/ansible-collection-metal)
 
 ![](https://img.shields.io/badge/stability-maintained-green.svg) [![Slack](https://slack.equinixmetal.com/badge.svg)](https://slack.equinixmetal.com/) [![Twitter Follow](https://img.shields.io/twitter/follow/equinixmetal.svg?style=social&label=Follow)](https://twitter.com/intent/follow?screen_name=equinixmetal)
 
