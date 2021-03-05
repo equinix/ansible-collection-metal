@@ -6,10 +6,6 @@ General information about setting up your Python environment, testing modules,
 Ansible coding styles, and more can be found in the [Ansible Community Guide](
 https://docs.ansible.com/ansible/latest/community/index.html).
 
-Information about boto library usage, module utils, testing, and more can be
-found in the [AWS Guidelines](https://docs.ansible.com/ansible/devel/dev_guide/platforms/aws_guidelines.html)
-documentation.
-
 ## Equinix Collections
 
 There is currently a single collection containing Equinix Metal content (modules and plugins).
