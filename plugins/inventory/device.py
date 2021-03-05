@@ -19,6 +19,7 @@ DOCUMENTATION = '''
         - constructed
     description:
         - Get inventory hosts from the Equinix Metal Device API.
+        - Uses a YAML configuration file that ends with equinix_metal.(yml|yaml).
     author:
         - Peter Sankauskas
         - Tomas Karasek
@@ -213,7 +214,7 @@ class InventoryModule(BaseInventoryPlugin, Constructable, Cacheable):
         '''
         try:
             manager = self._connect()
-            devices = manager.list_devices(project_id=project_id)
+            devices = manager.list_all_devices(project_id=project_id)
             return [self._get_host_info_dict_from_device(device) for device in devices]
         except Exception as e:
             raise AnsibleError("Failed to query devices from Equinix Metal API", orig_exc=e)

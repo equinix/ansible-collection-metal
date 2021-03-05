@@ -12,6 +12,6 @@ class ModuleDocFragment(object):
         project_id:
             description:
                 - Project ID.
-            required: true
+            required: false
             type: str
     '''

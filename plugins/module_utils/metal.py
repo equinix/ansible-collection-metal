@@ -8,6 +8,12 @@ __metaclass__ = type
 import re
 import uuid
 
+HAS_METAL_SDK = True
+try:
+    import packet
+except ImportError:
+    HAS_METAL_SDK = False
+
 from ansible.module_utils.basic import AnsibleModule, env_fallback
 
 NAME_RE = r'({0}|{0}{1}*{0})'.format(r'[a-zA-Z0-9]', r'[a-zA-Z0-9\-]')
@@ -28,6 +34,7 @@ class AnsibleMetalModule(object):
     default_settings = {
         "default_args": True,
         "project_id_arg": True,
+        "project_id_required": True,
         "module_class": AnsibleModule
     }
 
@@ -49,7 +56,7 @@ class AnsibleMetalModule(object):
             kwargs["argument_spec"] = argument_spec_full
 
         if local_settings["project_id_arg"]:
-            argument_spec_full = metal_project_id_argument_spec()
+            argument_spec_full = metal_project_id_argument_spec(local_settings["project_id_required"])
             try:
                 argument_spec_full.update(kwargs["argument_spec"])
             except (TypeError, NameError):
@@ -61,6 +68,19 @@ class AnsibleMetalModule(object):
         self.check_mode = self._module.check_mode
         self._diff = self._module._diff
         self._name = self._module._name
+
+        if not HAS_METAL_SDK:
+            self.fail_json(msg='python-packet required for this module')
+
+        if local_settings["default_args"]:
+            self.metal_conn = packet.Manager(auth_token=self.params.get('api_token'))
+
+    def get_devices(self):
+        project_id = self.params.get('project_id')
+        if not is_valid_uuid(project_id):
+            raise Exception("Project ID {0} does not seem to be valid".format(project_id))
+
+        return self.metal_conn.list_all_devices(project_id)
 
     @property
     def params(self):
@@ -88,14 +108,6 @@ class AnsibleMetalModule(object):
         return self._module.md5(*args, **kwargs)
 
 
-def devices_with_ids(devices, ids):
-    return [d for d in devices if (d.id in ids)]
-
-
-def devices_with_hostnames(devices, hostnames):
-    return [d for d in devices if (d.hostname in hostnames)]
-
-
 def metal_argument_spec():
     return dict(
         api_token=dict(
@@ -108,9 +120,9 @@ def metal_argument_spec():
     )
 
 
-def metal_project_id_argument_spec():
+def metal_project_id_argument_spec(required=True):
     return dict(
-        project_id=dict(required=True),
+        project_id=dict(required=required),
     )
 
 
@@ -211,6 +223,158 @@ def serialize_project(project):
     )
 
 
+def serialize_facility(facility):
+    """
+    Standard representation for a facility as returned by various tasks::
+
+        {
+            'id': '8e6470b3-b75e-47d1-bb93-45b225750975',
+            'name': 'Amsterdam, NL',
+            'code': 'ams1',
+            'features': [
+                'baremetal',
+                'storage',
+                'global_ipv4',
+                'backend_transfer',
+                'layer_2'
+            ],
+            'address': {
+                'href': '#0688e909-647e-4b21-bdf2-fc056d993fc5'
+            }
+        }
+    """
+    return dict(
+        id=facility.id,
+        name=facility.name,
+        code=facility.code,
+        features=facility.features,
+        address=facility.address
+    )
+
+
+def serialize_plan(plan):
+    """
+    Standard representation for a plan as returned by various tasks::
+
+        {
+            "id": "e69c0169-4726-46ea-98f1-939c9e8a3607",
+            "name": "t1.small.x86",
+            "description": "Our Type 0 configuration is a general use \"cloud killer\" server, with a Intel Atom 2.4Ghz processor and 8GB of RAM.",
+            "available_in":[
+                "ams1",
+                "ewr1",
+                "sjc1",
+                "nrt1",
+            ],
+            "line": "baremetal",
+            "pricing": {
+                "hour": 0.07
+            },
+            "slug": "baremetal_0",
+            "specs": {
+                "cpus": [
+                    {
+                        "count": 1,
+                        "type": "Intel Atom C2550 @ 2.4Ghz"
+                    }
+                ],
+                "drives": [
+                    {
+                        "count": 1,
+                        "size": "80GB",
+                        "type": "SSD"
+                    }
+                ],
+                "features": {
+                    "raid": false,
+                    "txt": true
+                },
+                "memory": {
+                    "total": "8GB"
+                },
+                "nics": [
+                    {
+                        "count": 2,
+                        "type": "1Gbps"
+                    }
+                ]
+            }
+        },
+    """
+    plan = dict(
+        id=plan.id,
+        name=plan.name,
+        slug=plan.slug,
+        line=plan.line,
+        pricing=plan.pricing,
+        specs=plan.specs,
+        description=plan.description,
+        available_in=[f.get('code', f) for f in plan.available_in]
+    )
+
+    return plan
+
+
+def serialize_operating_system(operating_system):
+    """
+    Standard representation for a operating_system as returned by various tasks::
+
+        {
+            "distro": "ubuntu",
+            "name": "Ubuntu 20.10",
+            "provisionable_on": [
+                "c1.small.x86",
+                "baremetal_1",
+                "c2.medium.x86",
+                "c3.medium.x86",
+                "c3.small.x86",
+                "g2.large.x86",
+                "m1.xlarge.x86",
+                "baremetal_2",
+                "m2.xlarge.x86",
+                "m3.large.x86",
+                "n2.xlarge.x86",
+                "s1.large.x86",
+                "baremetal_s",
+                "s3.xlarge.x86",
+                "t1.small.x86",
+                "baremetal_0",
+                "x1.small.x86",
+                "baremetal_1e",
+                "x2.xlarge.x86",
+                "x3.xlarge.x86"
+            ],
+            "slug": "ubuntu_20_10",
+            "version": "20.10"
+        },
+    """
+    operating_system = dict(
+        name=operating_system.name,
+        slug=operating_system.slug,
+        distro=operating_system.distro,
+        version=operating_system.version,
+        provisionable_on=operating_system.provisionable_on
+    )
+
+    return operating_system
+
+
+def serialize_organization(org):
+    """
+    Standard representation for an organization as returned by various tasks::
+
+        {
+            'id': 'org_id',
+            'name': 'org_name'
+        }
+
+    """
+    return dict(
+        id=org.id,
+        name=org.name,
+    )
+
+
 def serialize_sshkey(sshkey):
     """
     Standard representation for an ssh key as returned by various tasks::
@@ -229,7 +393,52 @@ def serialize_sshkey(sshkey):
     return sshkey_data
 
 
-def get_devices(metal_conn, project_id, per_page):
-    return metal_conn.list_devices(
-        project_id, params={
-            'per_page': per_page})
+def serialize_ip(ip):
+    """
+    Standard representation for an ip as returned by various tasks::
+
+        {
+            "address": "136.144.57.174",
+            "address_family": 4,
+            "assigned_to": null,
+            "cidr": 32,
+            "created_at": "2021-01-05T18:55:55Z",
+            "customdata": {},
+            "details": null,
+            "enabled": true,
+            "facility": "dc13",
+            "gateway": "136.144.57.174",
+            "global_ip": false,
+            "id": "d6764db0-69c6-44e9-922e-18146608cd3a",
+            "interface": null,
+            "management": false,
+            "netmask": "255.255.255.255",
+            "network": "136.144.57.174",
+            "project_id": "f2a2d7ad-886e-4207-bf38-10ebdf49cf84",
+            "public": true,
+            "tags": [
+                "cluster-api-provider-packet:cluster-id:versiontest"
+            ]
+        }
+    """
+    return dict(
+        id=ip.id,
+        address_family=ip.address_family,
+        netmask=ip.netmask,
+        created_at=ip.created_at,
+        details=ip.details,
+        tags=ip.tags,
+        public=ip.public,
+        cidr=ip.cidr,
+        management=ip.management,
+        enabled=ip.enabled,
+        global_ip=ip.global_ip,
+        customdata=ip.customdata,
+        project_id=ip.project['href'].replace("/projects/", ""),
+        facility=str(ip.facility),
+        assigned_to=ip.assigned_to,
+        interface=ip.interface,
+        network=ip.network,
+        address=ip.address,
+        gateway=ip.gateway,
+    )

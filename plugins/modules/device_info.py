@@ -70,52 +70,16 @@ import traceback
 
 from ansible.module_utils._text import to_native
 
-HAS_METAL_SDK = True
-try:
-    import packet
-except ImportError:
-    HAS_METAL_SDK = False
-
-from ansible_collections.equinix.metal.plugins.module_utils.metal import AnsibleMetalModule, is_valid_hostname, is_valid_uuid
-from ansible_collections.equinix.metal.plugins.module_utils.metal import serialize_device, get_devices, devices_with_ids, devices_with_hostnames
-
-MAX_DEVICES = 100
+from ansible_collections.equinix.metal.plugins.module_utils.metal import AnsibleMetalModule, serialize_device
 
 
-def get_hostname_list(module):
-    hostnames = [h.strip() for h in module.params.get('hostnames', [])]
-
-    for hn in hostnames:
-        if not is_valid_hostname(hn):
-            raise Exception("Hostname '%s' does not seem to be valid" % hn)
-
-    if len(hostnames) > MAX_DEVICES:
-        raise Exception("You specified too many hostnames, max is %d" %
-                        MAX_DEVICES)
-    return hostnames
-
-
-def get_device_id_list(module):
-    device_ids = [di.strip() for di in module.params.get('device_ids', [])]
-
-    for di in device_ids:
-        if not is_valid_uuid(di):
-            raise Exception("Device ID '%s' does not seem to be valid" % di)
-
-    if len(device_ids) > MAX_DEVICES:
-        raise Exception("You specified too many devices, max is %d" %
-                        MAX_DEVICES)
-    return device_ids
-
-
-def get_device_info(module, metal_conn):
-    project_id = module.params.get('project_id')
-    devices = get_devices(metal_conn, project_id, MAX_DEVICES)
+def get_device_info(module):
+    devices = module.get_devices()
 
     if module.params.get('device_ids'):
-        devices = devices_with_ids(devices, get_device_id_list(module))
+        devices = filter(lambda d: d.id in module.params.get('device_ids'), devices)
     elif module.params.get('hostnames'):
-        devices = devices_with_hostnames(devices, get_device_id_list(module))
+        devices = filter(lambda d: d.id in module.params.get('hostnames'), devices)
 
     return {
         'devices': [serialize_device(d) for d in devices]
@@ -134,13 +98,8 @@ def main():
         ]
     )
 
-    if not HAS_METAL_SDK:
-        module.fail_json(msg='python-packet required for this module')
-
-    metal_conn = packet.Manager(auth_token=module.params.get('api_token'))
-
     try:
-        module.exit_json(**get_device_info(module, metal_conn))
+        module.exit_json(**get_device_info(module))
     except Exception as e:
         module.fail_json(msg='failed to get device info, error: %s' %
                          (to_native(e)), exception=traceback.format_exc())

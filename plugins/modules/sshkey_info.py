@@ -78,17 +78,11 @@ sshkeys:
 
 from ansible.module_utils._text import to_native
 
-HAS_METAL_SDK = True
-try:
-    import packet
-except ImportError:
-    HAS_METAL_SDK = False
-
-from ansible_collections.equinix.metal.plugins.module_utils.metal import AnsibleMetalModule, is_valid_uuid, serialize_sshkey
+from ansible_collections.equinix.metal.plugins.module_utils.metal import AnsibleMetalModule, serialize_sshkey
 
 
-def get_sshkey_info(module, metal_conn):
-    sshkeys = metal_conn.list_ssh_keys()
+def get_sshkey_info(module):
+    sshkeys = module.metal_conn.list_ssh_keys()
 
     if module.params.get('ids'):
         sshkeys = [s for s in sshkeys if s.id in module.params.get('ids')]
@@ -117,13 +111,9 @@ def main():
             ('ids', 'fingerprints'),
         ]
     )
-    if not HAS_METAL_SDK:
-        module.fail_json(msg='python-packet required for this module')
-
-    metal_conn = packet.Manager(auth_token=module.params.get('api_token'))
 
     try:
-        module.exit_json(**get_sshkey_info(module, metal_conn))
+        module.exit_json(**get_sshkey_info(module))
     except Exception as e:
         module.fail_json(msg='failed to get sshkey info: %s' % to_native(e))
 

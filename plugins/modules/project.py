@@ -116,16 +116,16 @@ except ImportError:
 from ansible_collections.equinix.metal.plugins.module_utils.metal import AnsibleMetalModule
 
 
-def act_on_project(target_state, module, metal_conn):
+def act_on_project(target_state, module):
     result_dict = {'changed': False}
     given_id = module.params.get('id')
     given_name = module.params.get('name')
     if given_id:
         matching_projects = [
-            p for p in metal_conn.list_projects() if given_id == p.id]
+            p for p in module.metal_conn.list_projects() if given_id == p.id]
     else:
         matching_projects = [
-            p for p in metal_conn.list_projects() if given_name == p.name]
+            p for p in module.metal_conn.list_projects() if given_name == p.name]
 
     if target_state == 'present':
         if len(matching_projects) == 0:
@@ -139,10 +139,10 @@ def act_on_project(target_state, module, metal_conn):
                     "payment_method_id": payment_method,
                     "customdata": custom_data
                 }
-                new_project_data = metal_conn.call_api("projects", "POST", params)
-                new_project = packet.Project(new_project_data, metal_conn)
+                new_project_data = module.metal_conn.call_api("projects", "POST", params)
+                new_project = packet.Project(new_project_data, module.metal_conn)
             else:
-                new_project = metal_conn.create_organization_project(
+                new_project = module.metal_conn.create_organization_project(
                     org_id=org_id,
                     name=given_name,
                     payment_method_id=payment_method,
@@ -194,8 +194,6 @@ def main():
     if not HAS_METAL_SDK:
         module.fail_json(msg='python-packet required for this module')
 
-    metal_conn = packet.Manager(auth_token=module.params.get('api_token'))
-
     state = module.params.get('state')
 
     # TODO: implement proper check mode
@@ -203,7 +201,7 @@ def main():
         module.exit_json(changed=False)
 
     try:
-        module.exit_json(**act_on_project(state, module, metal_conn))
+        module.exit_json(**act_on_project(state, module))
     except Exception as e:
         module.fail_json(
             msg="failed to set project state {0}: {1}".format(state, to_native(e)))
