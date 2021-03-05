@@ -1,14 +1,14 @@
-.. _equinix.metal.project_info_module:
+.. _equinix.metal.plan_info_module:
 
 
-**************************
-equinix.metal.project_info
-**************************
+***********************
+equinix.metal.plan_info
+***********************
 
-**Gather information about Equinix Metal projects**
+**Gather information about Equinix Metal plans**
 
 
-Version added: 1.2.0
+Version added: 1.4.0
 
 .. contents::
    :local:
@@ -17,8 +17,8 @@ Version added: 1.2.0
 
 Synopsis
 --------
-- Gather information about Equinix Metal projects.
-- API is documented at https://metal.equinix.com/developers/api/projects/.
+- Gather information about Equinix Metal plans.
+- API is documented at https://metal.equinix.com/developers/api/plans/.
 
 
 
@@ -71,7 +71,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>One or more project ids.</div>
+                        <div>One or more plan ids.</div>
                 </td>
             </tr>
             <tr>
@@ -87,7 +87,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>One or more project names.</div>
+                        <div>One or more plan names.</div>
                 </td>
             </tr>
     </table>
@@ -104,16 +104,16 @@ Examples
     # All the examples assume that you have your Equinix Metal API token in env var METAL_API_TOKEN.
     # You can also pass it to the api_token parameter of the module instead.
 
-    - name: Gather information about all projects
+    - name: Gather information about all plans
       hosts: localhost
       tasks:
-        - equinix.metal.project_info:
+        - equinix.metal.plan_info:
 
 
-    - name: Gather information about a particular project using ID
+    - name: Gather information about a particular plan using ID
       hosts: localhost
       tasks:
-        - equinix.metal.project_info:
+        - equinix.metal.plan_info:
           ids:
             - 173d7f11-f7b9-433e-ac40-f1571a38037a
 
@@ -134,7 +134,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>projects</b>
+                    <b>plans</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">list</span>
@@ -142,10 +142,10 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>Information about each project that was found</div>
+                            <div>Information about each plan that was found</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[{&quot;name&quot;: &quot;my-project&quot;, &quot;id&quot;: &quot;2a5122b9-c323-4d5c-b53c-9ad3f54273e7&quot;}]</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[{ &quot;id&quot;: &quot;e69c0169-4726-46ea-98f1-939c9e8a3607&quot;, &quot;name&quot;: &quot;t1.small.x86&quot;, &quot;description&quot;: &quot;Our Type 0 configuration is a general use &quot;cloud killer&quot; server, with a Intel Atom 2.4Ghz processor and 8GB of RAM.&quot;, &quot;available_in&quot;:[ &quot;ams1&quot;, &quot;ewr1&quot;, &quot;sjc1&quot;, &quot;nrt1&quot;, ], &quot;line&quot;: &quot;baremetal&quot;, &quot;pricing&quot;: { &quot;hour&quot;: 0.07 }, &quot;slug&quot;: &quot;baremetal_0&quot;, &quot;specs&quot;: { &quot;cpus&quot;: [ { &quot;count&quot;: 1, &quot;type&quot;: &quot;Intel Atom C2550 @ 2.4Ghz&quot; } ], &quot;drives&quot;: [ { &quot;count&quot;: 1, &quot;size&quot;: &quot;80GB&quot;, &quot;type&quot;: &quot;SSD&quot; } ], &quot;features&quot;: { &quot;raid&quot;: false, &quot;txt&quot;: true }, &quot;memory&quot;: { &quot;total&quot;: &quot;8GB&quot; }, &quot;nics&quot;: [ { &quot;count&quot;: 2, &quot;type&quot;: &quot;1Gbps&quot; } ] } }]</div>
                 </td>
             </tr>
     </table>
@@ -159,6 +159,4 @@ Status
 Authors
 ~~~~~~~
 
-- Tomas Karasek (@t0mk) <tom.to.the.k@gmail.com>
-- Nurfet Becirevic (@nurfet-becirevic) <nurfet.becirevic@gmail.com>
 - Jason DeTiberus (@detiber) <jdetiberus@equinix.com>

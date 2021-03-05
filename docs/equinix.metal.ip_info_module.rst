@@ -1,14 +1,14 @@
-.. _equinix.metal.project_info_module:
+.. _equinix.metal.ip_info_module:
 
 
-**************************
-equinix.metal.project_info
-**************************
+*********************
+equinix.metal.ip_info
+*********************
 
-**Gather information about Equinix Metal projects**
+**Gather information about project IP Addresses**
 
 
-Version added: 1.2.0
+Version added: 1.4.0
 
 .. contents::
    :local:
@@ -17,8 +17,8 @@ Version added: 1.2.0
 
 Synopsis
 --------
-- Gather information about Equinix Metal projects.
-- API is documented at https://metal.equinix.com/developers/api/projects/.
+- Gather information about project IP addresses in Equinix Metal.
+- See https://metal.equinix.com/developers/api/ipaddresses/ for more info on IP Addresses.
 
 
 
@@ -61,33 +61,17 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>ids</b>
+                    <b>project_id</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">list</span>
-                         / <span style="color: purple">elements=string</span>
+                        <span style="color: purple">string</span>
+                         / <span style="color: red">required</span>
                     </div>
                 </td>
                 <td>
                 </td>
                 <td>
-                        <div>One or more project ids.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>names</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">list</span>
-                         / <span style="color: purple">elements=string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>One or more project names.</div>
+                        <div>Project ID.</div>
                 </td>
             </tr>
     </table>
@@ -104,18 +88,11 @@ Examples
     # All the examples assume that you have your Equinix Metal API token in env var METAL_API_TOKEN.
     # You can also pass it to the api_token parameter of the module instead.
 
-    - name: Gather information about all projects
+    - name: Gather information about all devices
       hosts: localhost
       tasks:
-        - equinix.metal.project_info:
-
-
-    - name: Gather information about a particular project using ID
-      hosts: localhost
-      tasks:
-        - equinix.metal.project_info:
-          ids:
-            - 173d7f11-f7b9-433e-ac40-f1571a38037a
+        - equinix.metal.ip_info:
+            project_id: 89b497ee-5afc-420a-8fb5-56984898f4df
 
 
 
@@ -134,7 +111,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>projects</b>
+                    <b>ips</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">list</span>
@@ -142,10 +119,10 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>Information about each project that was found</div>
+                            <div>Information about each ip address that was found</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[{&quot;name&quot;: &quot;my-project&quot;, &quot;id&quot;: &quot;2a5122b9-c323-4d5c-b53c-9ad3f54273e7&quot;}]</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[{&quot;address&quot;: &quot;136.144.57.174&quot;, &quot;address_family&quot;: 4, &quot;assigned_to&quot;: null, &quot;cidr&quot;: 32, &quot;created_at&quot;: &quot;2021-01-05T18:55:55Z&quot;, &quot;customdata&quot;: {}, &quot;details&quot;: null, &quot;enabled&quot;: true, &quot;facility&quot;: &quot;dc13&quot;, &quot;gateway&quot;: &quot;136.144.57.174&quot;, &quot;global_ip&quot;: false, &quot;id&quot;: &quot;d6764db0-69c6-44e9-922e-18146608cd3a&quot;, &quot;interface&quot;: null, &quot;management&quot;: false, &quot;netmask&quot;: &quot;255.255.255.255&quot;, &quot;network&quot;: &quot;136.144.57.174&quot;, &quot;project_id&quot;: &quot;f2a2d7ad-886e-4207-bf38-10ebdf49cf84&quot;, &quot;public&quot;: true, &quot;tags&quot;: [&quot;cluster-api-provider-packet:cluster-id:versiontest&quot;]}]</div>
                 </td>
             </tr>
     </table>
@@ -159,6 +136,4 @@ Status
 Authors
 ~~~~~~~
 
-- Tomas Karasek (@t0mk) <tom.to.the.k@gmail.com>
-- Nurfet Becirevic (@nurfet-becirevic) <nurfet.becirevic@gmail.com>
 - Jason DeTiberus (@detiber) <jdetiberus@equinix.com>

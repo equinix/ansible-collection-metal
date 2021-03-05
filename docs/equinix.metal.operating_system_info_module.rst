@@ -1,14 +1,14 @@
-.. _equinix.metal.project_info_module:
+.. _equinix.metal.operating_system_info_module:
 
 
-**************************
-equinix.metal.project_info
-**************************
+***********************************
+equinix.metal.operating_system_info
+***********************************
 
-**Gather information about Equinix Metal projects**
+**Gather information about Equinix Metal operating_systems**
 
 
-Version added: 1.2.0
+Version added: 1.4.0
 
 .. contents::
    :local:
@@ -17,8 +17,8 @@ Version added: 1.2.0
 
 Synopsis
 --------
-- Gather information about Equinix Metal projects.
-- API is documented at https://metal.equinix.com/developers/api/projects/.
+- Gather information about Equinix Metal operating_systems.
+- API is documented at https://metal.equinix.com/developers/api/operating_systems/.
 
 
 
@@ -61,7 +61,7 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>ids</b>
+                    <b>distros</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">list</span>
@@ -71,13 +71,13 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>One or more project ids.</div>
+                        <div>One or more operating_system distros.</div>
                 </td>
             </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>names</b>
+                    <b>slugs</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">list</span>
@@ -87,7 +87,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>One or more project names.</div>
+                        <div>One or more operating_system slugs.</div>
                 </td>
             </tr>
     </table>
@@ -104,18 +104,18 @@ Examples
     # All the examples assume that you have your Equinix Metal API token in env var METAL_API_TOKEN.
     # You can also pass it to the api_token parameter of the module instead.
 
-    - name: Gather information about all projects
+    - name: Gather information about all operating_systems
       hosts: localhost
       tasks:
-        - equinix.metal.project_info:
+        - equinix.metal.operating_system_info:
 
 
-    - name: Gather information about a particular project using ID
+    - name: Gather information about a particular operating_system using slug
       hosts: localhost
       tasks:
-        - equinix.metal.project_info:
-          ids:
-            - 173d7f11-f7b9-433e-ac40-f1571a38037a
+        - equinix.metal.operating_system_info:
+          slugs:
+            - ubuntu_20_10
 
 
 
@@ -134,7 +134,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>projects</b>
+                    <b>operating_systems</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">list</span>
@@ -142,10 +142,10 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>Information about each project that was found</div>
+                            <div>Information about each operating_system that was found</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[{&quot;name&quot;: &quot;my-project&quot;, &quot;id&quot;: &quot;2a5122b9-c323-4d5c-b53c-9ad3f54273e7&quot;}]</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[{ &quot;distro&quot;: &quot;ubuntu&quot;, &quot;name&quot;: &quot;Ubuntu 20.10&quot;, &quot;provisionable_on&quot;: [ &quot;c1.small.x86&quot;, &quot;baremetal_1&quot;, &quot;c2.medium.x86&quot;, &quot;c3.medium.x86&quot;, &quot;c3.small.x86&quot;, &quot;g2.large.x86&quot;, &quot;m1.xlarge.x86&quot;, &quot;baremetal_2&quot;, &quot;m2.xlarge.x86&quot;, &quot;m3.large.x86&quot;, &quot;n2.xlarge.x86&quot;, &quot;s1.large.x86&quot;, &quot;baremetal_s&quot;, &quot;s3.xlarge.x86&quot;, &quot;t1.small.x86&quot;, &quot;baremetal_0&quot;, &quot;x1.small.x86&quot;, &quot;baremetal_1e&quot;, &quot;x2.xlarge.x86&quot;, &quot;x3.xlarge.x86&quot; ], &quot;slug&quot;: &quot;ubuntu_20_10&quot;, &quot;version&quot;: &quot;20.10&quot; }]</div>
                 </td>
             </tr>
     </table>
@@ -159,6 +159,4 @@ Status
 Authors
 ~~~~~~~
 
-- Tomas Karasek (@t0mk) <tom.to.the.k@gmail.com>
-- Nurfet Becirevic (@nurfet-becirevic) <nurfet.becirevic@gmail.com>
 - Jason DeTiberus (@detiber) <jdetiberus@equinix.com>

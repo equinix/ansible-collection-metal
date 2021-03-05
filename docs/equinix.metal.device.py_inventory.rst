@@ -18,6 +18,7 @@ Version added: 1.0.0
 Synopsis
 --------
 - Get inventory hosts from the Equinix Metal Device API.
+- Uses a YAML configuration file that ends with equinix_metal.(yml|yaml).
 
 
 

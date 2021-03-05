@@ -1,14 +1,14 @@
-.. _equinix.metal.project_info_module:
+.. _equinix.metal.capacity_info_module:
 
 
-**************************
-equinix.metal.project_info
-**************************
+***************************
+equinix.metal.capacity_info
+***************************
 
-**Gather information about Equinix Metal projects**
+**Gather information about Equinix Metal capacity**
 
 
-Version added: 1.2.0
+Version added: 1.4.0
 
 .. contents::
    :local:
@@ -17,8 +17,8 @@ Version added: 1.2.0
 
 Synopsis
 --------
-- Gather information about Equinix Metal projects.
-- API is documented at https://metal.equinix.com/developers/api/projects/.
+- Gather information about Equinix Metal capacity.
+- API is documented at https://metal.equinix.com/developers/api/capacity/.
 
 
 
@@ -61,33 +61,20 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>ids</b>
+                    <b>include_legacy</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">list</span>
-                         / <span style="color: purple">elements=string</span>
+                        <span style="color: purple">boolean</span>
                     </div>
                 </td>
                 <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>no</li>
+                                    <li>yes</li>
+                        </ul>
                 </td>
                 <td>
-                        <div>One or more project ids.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>names</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">list</span>
-                         / <span style="color: purple">elements=string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>One or more project names.</div>
+                        <div>Include legacy facilities.</div>
                 </td>
             </tr>
     </table>
@@ -104,18 +91,10 @@ Examples
     # All the examples assume that you have your Equinix Metal API token in env var METAL_API_TOKEN.
     # You can also pass it to the api_token parameter of the module instead.
 
-    - name: Gather information about all projects
+    - name: Gather information about all capacity
       hosts: localhost
       tasks:
-        - equinix.metal.project_info:
-
-
-    - name: Gather information about a particular project using ID
-      hosts: localhost
-      tasks:
-        - equinix.metal.project_info:
-          ids:
-            - 173d7f11-f7b9-433e-ac40-f1571a38037a
+        - equinix.metal.capacity_info:
 
 
 
@@ -134,18 +113,18 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>projects</b>
+                    <b>capacity</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">list</span>
+                      <span style="color: purple">dictionary</span>
                     </div>
                 </td>
                 <td>always</td>
                 <td>
-                            <div>Information about each project that was found</div>
+                            <div>Information about capacity that was found</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[{&quot;name&quot;: &quot;my-project&quot;, &quot;id&quot;: &quot;2a5122b9-c323-4d5c-b53c-9ad3f54273e7&quot;}]</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{ &quot;da11&quot;: { &quot;c3.medium.x86&quot;: { &quot;level&quot;: &quot;normal&quot; }, &quot;c3.small.x86&quot;: { &quot;level&quot;: &quot;normal&quot; }, &quot;m3.large.x86&quot;: { &quot;level&quot;: &quot;normal&quot; }, &quot;n2.xlarge.x86&quot;: { &quot;level&quot;: &quot;unavailable&quot; }, &quot;s3.xlarge.x86&quot;: { &quot;level&quot;: &quot;normal&quot; } }, }</div>
                 </td>
             </tr>
     </table>
@@ -159,6 +138,4 @@ Status
 Authors
 ~~~~~~~
 
-- Tomas Karasek (@t0mk) <tom.to.the.k@gmail.com>
-- Nurfet Becirevic (@nurfet-becirevic) <nurfet.becirevic@gmail.com>
 - Jason DeTiberus (@detiber) <jdetiberus@equinix.com>
