@@ -76,8 +76,8 @@
       loop: "{{ matching_projects }}"
 
     - set_fact:
-        mp: "{{ test_devices.results | map(attribute='item.id') }}"
-        md: "{{ test_devices.results | map(attribute='devices') | map('selectattr', 'hostname', 'match', '^'+test_prefix) | map('map', attribute='id') }}"
+        mp: "{{ test_projects.results | map(attribute='item.id') | list }}"
+        md: "{{ test_devices.results | map(attribute='devices') | map('selectattr', 'hostname', 'match', '^'+test_prefix) | map('map', attribute='id') | list }}"
 
     - set_fact:
         matching_proj_device_ids: "{{ dict(mp | zip(md)) | dict2items(key_name='project_id', value_name='device_ids') | selectattr('device_ids') | list }}"
