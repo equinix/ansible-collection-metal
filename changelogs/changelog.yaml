@@ -75,3 +75,11 @@ releases:
       name: user_info
       namespace: ''
     release_date: '2021-03-05'
+  1.4.1:
+    changes:
+      bugfixes:
+      - project - fix deletion when there are more than 10 projects
+      - project_info - fix listing when there are more than 10 projects
+    fragments:
+    - 20-increase-project-pagesize.yml
+    release_date: '2021-03-09'

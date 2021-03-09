@@ -122,10 +122,10 @@ def act_on_project(target_state, module):
     given_name = module.params.get('name')
     if given_id:
         matching_projects = [
-            p for p in module.metal_conn.list_projects() if given_id == p.id]
+            p for p in module.metal_conn.list_projects(params={'per_page': 1000, 'exclude': 'members'}) if given_id == p.id]
     else:
         matching_projects = [
-            p for p in module.metal_conn.list_projects() if given_name == p.name]
+            p for p in module.metal_conn.list_projects(params={'per_page': 1000, 'exclude': 'members'}) if given_name == p.name]
 
     if target_state == 'present':
         if len(matching_projects) == 0:

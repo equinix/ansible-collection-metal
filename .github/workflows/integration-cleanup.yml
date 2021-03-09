@@ -1,0 +1,34 @@
+name: Integration Cleanup
+on:
+  # Run Integration Cleanup once per day (at 05:00 UTC)
+  schedule:
+    - cron: '0 5 * * *'
+env:
+  NAMESPACE: equinix
+  COLLECTION_NAME: metal
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    name: Integration Cleanup
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+        with:
+          path: ansible_collections/${{env.NAMESPACE}}/${{env.COLLECTION_NAME}}
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          # it is just required to run that once as "ansible-test integration" in the docker image
+          # will run on all python versions it supports.
+          python-version: 3.8
+
+      - name: Install ansible-base
+        run: pip install https://github.com/ansible/ansible/archive/stable-2.10.tar.gz --disable-pip-version-check
+
+      - name: Run cleanup
+        env:
+          METAL_API_TOKEN: ${{ secrets.METAL_API_TOKEN }}
+        run: |
+          ansible-playbook cleanup.yaml
+        working-directory: ./ansible_collections/${{env.NAMESPACE}}/${{env.COLLECTION_NAME}}

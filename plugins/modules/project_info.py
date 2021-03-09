@@ -69,7 +69,7 @@ from ansible_collections.equinix.metal.plugins.module_utils.metal import Ansible
 
 
 def get_project_info(module):
-    projects = module.metal_conn.list_projects()
+    projects = module.metal_conn.list_projects(params={'per_page': 1000, 'exclude': 'members'})
 
     if module.params.get('ids'):
         projects = [p for p in projects if p.id in module.params.get('ids')]
