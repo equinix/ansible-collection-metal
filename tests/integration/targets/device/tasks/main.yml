@@ -76,7 +76,7 @@
       loop: "{{ matching_projects }}"
 
     - set_fact:
-        mp: "{{ test_projects.results | map(attribute='item.id') | list }}"
+        mp: "{{ test_devices.results | map(attribute='item.id') | list }}"
         md: "{{ test_devices.results | map(attribute='devices') | map('selectattr', 'hostname', 'match', '^'+test_prefix) | map('map', attribute='id') | list }}"
 
     - set_fact:
