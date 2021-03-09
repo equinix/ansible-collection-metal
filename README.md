@@ -28,7 +28,7 @@ This collection depends on [packet-python](https://github.com/packethost/packet-
 ### Inventory plugins
 Name | Description
 --- | ---
-[equinix.metal.device.py](https://github.com/equinix/ansible-collection-metal/blob/main/docs/equinix.metal.device.py_inventory.rst)|Equinix Metal Device inventory source
+[equinix.metal.device](https://github.com/equinix/ansible-collection-metal/blob/main/docs/equinix.metal.device.py_inventory.rst)|Equinix Metal Device inventory source
 
 ### Modules
 Name | Description
