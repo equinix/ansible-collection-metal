@@ -5,6 +5,15 @@ Equinix.Metal Release Notes
 .. contents:: Topics
 
 
+v1.4.1
+======
+
+Bugfixes
+--------
+
+- project - fix deletion when there are more than 10 projects
+- project_info - fix listing when there are more than 10 projects
+
 v1.4.0
 ======
 
