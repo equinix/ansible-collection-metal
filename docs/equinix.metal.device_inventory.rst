@@ -1,9 +1,9 @@
-.. _equinix.metal.device.py_inventory:
+.. _equinix.metal.device_inventory:
 
 
-***********************
-equinix.metal.device.py
-***********************
+********************
+equinix.metal.device
+********************
 
 **Equinix Metal Device inventory source**
 

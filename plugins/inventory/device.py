@@ -8,7 +8,7 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 DOCUMENTATION = '''
-    name: device.py
+    name: device
     plugin_type: inventory
     short_description: Equinix Metal Device inventory source
     requirements:
