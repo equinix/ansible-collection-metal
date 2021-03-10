@@ -30,5 +30,7 @@ jobs:
         env:
           METAL_API_TOKEN: ${{ secrets.METAL_API_TOKEN }}
         run: |
+          ansible-galaxy collection build
+          ansible-galaxy collection install equinix-metal-*.tar.gz
           ansible-playbook cleanup.yaml
         working-directory: ./ansible_collections/${{env.NAMESPACE}}/${{env.COLLECTION_NAME}}
