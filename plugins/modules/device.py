@@ -484,7 +484,7 @@ def main():
     )
 
     if not HAS_METAL_SDK:
-        module.fail_json(msg='python-packet required for this module')
+        module.fail_json(msg='packet-python required for this module')
 
     state = module.params.get('state')
 

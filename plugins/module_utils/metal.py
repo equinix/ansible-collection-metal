@@ -70,7 +70,7 @@ class AnsibleMetalModule(object):
         self._name = self._module._name
 
         if not HAS_METAL_SDK:
-            self.fail_json(msg='python-packet required for this module')
+            self.fail_json(msg='packet-python required for this module')
 
         if local_settings["default_args"]:
             self.metal_conn = packet.Manager(auth_token=self.params.get('api_token'))
