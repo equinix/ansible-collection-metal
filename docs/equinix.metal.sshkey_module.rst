@@ -171,7 +171,7 @@ Examples
       hosts: localhost
       tasks:
         equinix.metal.sshkey:
-          key: "{{ lookup('file', 'my_sshkey.pub') }}"
+          key: "{{ lookup('ansible.builtin.file', 'my_sshkey.pub') }}"
 
     - name: Create sshkey from file
       hosts: localhost
