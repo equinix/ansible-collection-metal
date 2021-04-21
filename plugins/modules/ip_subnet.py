@@ -14,7 +14,7 @@ __metaclass__ = type
 DOCUMENTATION = '''
 ---
 module: ip_subnet
-short_description: Assign IP subnet to a bare metal server.
+short_description: Assign IP subnet to a bare metal server
 description:
     - Assign or unassign IPv4 or IPv6 subnets to or from a device in Equinix Metal.
     - IPv4 subnets must come from already reserved block.
