@@ -427,7 +427,7 @@ Examples
           user_data: |
             #cloud-config
             ssh_authorized_keys:
-              - {{ lookup('file', 'my_equinix_metal_sshkey') }}
+              - {{ lookup('ansible.builtin.file', 'my_equinix_metal_sshkey') }}
             coreos:
               etcd:
                 discovery: https://discovery.etcd.io/6a28e078895c5ec737174db2419bb2f3
