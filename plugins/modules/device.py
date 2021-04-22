@@ -91,7 +91,7 @@ options:
         type: str
     user_data:
         description:
-            - Userdata blob made available to the machine
+            - Userdata blob made available to the machine.
         type: str
     wait_for_public_IPv:
         description:

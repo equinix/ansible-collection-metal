@@ -39,7 +39,7 @@ EXAMPLES = '''
 
 RETURN = '''
 capacity:
-    description: Information about capacity that was found
+    description: Information about capacity that was found.
     type: dict
     sample: '{
                 "da11": {
