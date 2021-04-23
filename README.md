@@ -130,10 +130,6 @@ It is possible to follow changes to the changelog by subscribing to <https://git
 
 <!-- Optional. Include the roadmap for this collection, and the proposed release/versioning strategy so users can anticipate the upgrade/update cycle. -->
 
-There is no predefined roadmap or timeline for new features or upcoming releases.
-
-New releases will be made as demands based on incoming issues or enhancements and the maintainers perceived need to distribute the resultant changes.
-
 ## Publishing New Version
 
 Prepare the release:
