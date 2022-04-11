@@ -49,7 +49,7 @@ jobs:
         run: ansible-galaxy collection build
         working-directory: ./ansible_collections/${{env.NAMESPACE}}/${{env.COLLECTION_NAME}}
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: ${{env.NAMESPACE}}-${{env.COLLECTION_NAME}}-${{github.sha}}-ansible-${{matrix.ansible}}.tar.gz
           path: ./ansible_collections/${{env.NAMESPACE}}/${{env.COLLECTION_NAME}}/${{env.NAMESPACE}}-${{env.COLLECTION_NAME}}-*.tar.gz
