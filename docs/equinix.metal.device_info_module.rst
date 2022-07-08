@@ -124,14 +124,16 @@ Examples
       hosts: localhost
       tasks:
         - equinix.metal.device_info:
+            project_id: 89b497ee-5afc-420a-8fb5-56984898f4df 
 
 
     - name: Gather information about a particular device using ID
       hosts: localhost
       tasks:
         - equinix.metal.device_info:
-          device_ids:
-            - 173d7f11-f7b9-433e-ac40-f1571a38037a
+            project_id: 89b497ee-5afc-420a-8fb5-56984898f4df
+            device_ids:
+              - 173d7f11-f7b9-433e-ac40-f1571a38037a
 
 
 
