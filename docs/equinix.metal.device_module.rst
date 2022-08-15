@@ -510,7 +510,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                             <div>Information about each device that was processed</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[{&quot;hostname&quot;: &quot;my-server.com&quot;, &quot;id&quot;: &quot;2a5122b9-c323-4d5c-b53c-9ad3f54273e7&quot;, &quot;public_ipv4&quot;: &quot;147.229.15.12&quot;, &quot;private-ipv4&quot;: &quot;10.0.15.12&quot;, &quot;tags&quot;: [], &quot;locked&quot;: false, &quot;state&quot;: &quot;provisioning&quot;, &quot;public_ipv6&quot;: &quot;&quot;2604:1380:2:5200::3&quot;}]</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[{&quot;hostname&quot;: &quot;my-server.com&quot;, &quot;id&quot;: &quot;2a5122b9-c323-4d5c-b53c-9ad3f54273e7&quot;, &quot;public_ipv4&quot;: &quot;147.229.15.12&quot;, &quot;private-ipv4&quot;: &quot;10.0.15.12&quot;, &quot;tags&quot;: [], &quot;locked&quot;: false, &quot;state&quot;: &quot;provisioning&quot;, &quot;public_ipv6&quot;: &quot;2604:1380:2:5200::3&quot;}]</div>
                 </td>
             </tr>
     </table>
