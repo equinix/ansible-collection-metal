@@ -346,7 +346,7 @@ def wait_for_devices_active(module, watched_devices):
     refreshed = watched_devices
     while wait_timeout > time.time():
         refreshed = refresh_device_list(module, watched_devices)
-        if all(d.state == 'active' for d in refreshed):
+        if len(refreshed) == len(watched_devices) and all(d.state == 'active' for d in refreshed):
             return refreshed
         time.sleep(5)
     raise Exception("Waiting for state \"active\" timed out for devices: %s"
@@ -368,7 +368,7 @@ def wait_for_public_IPv(module, created_devices):
     wait_timeout = time.time() + wait_timeout
     while wait_timeout > time.time():
         refreshed = refresh_device_list(module, created_devices)
-        if all_have_public_ip(refreshed, address_family):
+        if len(refreshed) == len(created_devices) and all_have_public_ip(refreshed, address_family):
             return refreshed
         time.sleep(5)
 
