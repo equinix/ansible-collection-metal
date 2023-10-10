@@ -120,6 +120,12 @@ EOF
 ## Release notes
 <!--Add a link to a changelog.rst file or an external docsite to cover this information. -->
 
+This project tags releases based on the Semantic Versioning specification. See <https://semver.org/#semantic-versioning-specification-semver> for more details. Please pin your dependencies accordingly.
+
+Changes to this project can be reviewed in the [CHANGELOG.rst](https://github.com/equinix/ansible-collection-metal/blob/main/CHANGELOG.rst) file.
+
+It is possible to follow changes to the changelog by subscribing to <https://github.com/equinix/ansible-collection-metal/releases.atom>, or "Watching" releases using the GitHub UI.
+
 ## Roadmap
 
 <!-- Optional. Include the roadmap for this collection, and the proposed release/versioning strategy so users can anticipate the upgrade/update cycle. -->
