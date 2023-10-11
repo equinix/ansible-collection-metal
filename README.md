@@ -2,12 +2,18 @@
 
 [![CI](https://github.com/equinix/ansible-collection-metal/actions/workflows/ansible-integration.yml/badge.svg)](https://github.com/equinix/ansible-collection-metal/actions/workflows/ansible-integration.yml)[![Codecov](https://img.shields.io/codecov/c/github/equinix/ansible-collection-metal)](https://codecov.io/gh/equinix/ansible-collection-metal)
 
-![](https://img.shields.io/badge/stability-maintained-green.svg) [![Slack](https://slack.equinixmetal.com/badge.svg)](https://slack.equinixmetal.com/) [![Twitter Follow](https://img.shields.io/twitter/follow/equinixmetal.svg?style=social&label=Follow)](https://twitter.com/intent/follow?screen_name=equinixmetal)
+[![Depreacted](https://img.shields.io/badge/stability-deprecated-black.svg)](https://github.com/equinix/ansible-collection-metal/issues/59) [![Slack](https://slack.equinixmetal.com/badge.svg)](https://slack.equinixmetal.com/) [![Twitter Follow](https://img.shields.io/twitter/follow/equinixmetal.svg?style=social&label=Follow)](https://twitter.com/intent/follow?screen_name=equinixmetal)
 
-This repository is [Maintained](https://github.com/packethost/standards/blob/master/maintained-statement.md)!
+> [!IMPORTANT]
+> This repository is [Deprecated](https://github.com/equinix-labs/equinix-labs/blob/master/deprecated-statement.md)!
+>
+> The Equinix Ansible Collection has been created to provide an interface to [Equinix APIs](https://developer.equinix.com/catalog) throughout the platform. Please transition to the Ansible Equinix Collection which has module parity with this Metal collection. The module names and parameters may differ slightly but the same backend APIs are utilized.  The Equinix Collection is backed by the more comprehensive and more maintainable [metal-python](https://github.com/equinix-labs/metal-python) SDK. This collection and metal-python follow upstream API naming and structures closely.
+>
+> * Equinix Deploy: <https://deploy.equinix.com/labs/ansible-collection-equinix/>
+> * Ansible Collection: <https://galaxy.ansible.com/ui/repo/published/equinix/cloud/>
+> * GitHub: [https://github.com/equinix-labs/ansible-collection-equinix](https://github.com/equinix-labs/ansible-collection-equinix#equinix-ansible-collection)
 
-The Ansible Equinix Metal collection includes a variety of Ansible content to help automate the management of Equinix Metal resources. This collection is maintained by the Equinix Metal team.
-
+The Ansible Equinix Metal collection includes a variety of Ansible content to help automate the management of Equinix Metal resources. This collection is now deprecated.
 <!--start requires_ansible-->
 ## Ansible version compatibility
 
