@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/equinix/ansible-collection-metal/actions/workflows/ansible-integration.yml/badge.svg)](https://github.com/equinix/ansible-collection-metal/actions/workflows/ansible-integration.yml)[![Codecov](https://img.shields.io/codecov/c/github/equinix/ansible-collection-metal)](https://codecov.io/gh/equinix/ansible-collection-metal)
 
-[![Depreacted](https://img.shields.io/badge/stability-deprecated-black.svg)](https://github.com/equinix/ansible-collection-metal/issues/59) [![Slack](https://slack.equinixmetal.com/badge.svg)](https://slack.equinixmetal.com/) [![Twitter Follow](https://img.shields.io/twitter/follow/equinixmetal.svg?style=social&label=Follow)](https://twitter.com/intent/follow?screen_name=equinixmetal)
+[![Deprecated](https://img.shields.io/badge/stability-deprecated-black.svg)](https://github.com/equinix/ansible-collection-metal/issues/59) [![Slack](https://slack.equinixmetal.com/badge.svg)](https://slack.equinixmetal.com/) [![Twitter Follow](https://img.shields.io/twitter/follow/equinixmetal.svg?style=social&label=Follow)](https://twitter.com/intent/follow?screen_name=equinixmetal)
 
 > [!IMPORTANT]
 > This repository is [Deprecated](https://github.com/equinix-labs/equinix-labs/blob/master/deprecated-statement.md)!
